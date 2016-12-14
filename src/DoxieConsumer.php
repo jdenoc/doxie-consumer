@@ -9,9 +9,10 @@ require_once __DIR__.'/DoxieScan.php';
  */
 class DoxieConsumer {
 
-    const METHOD_GET = "GET";
-    const METHOD_POST = "POST";
-    const METHOD_DELETE = "DELETE";
+    const URI_STATUS = '/hello.json';
+    const URI_LIST = '/scans.json';
+    const URI_FILE_PREFIX = '/scans';
+    const URI_DELETE = '/scan/delete.json';
 
     /**
      * @var Guzzle\Http\Client
@@ -42,7 +43,7 @@ class DoxieConsumer {
      */
     public function is_available(){
         $this->are_dependancies_set();
-        $request_url = $this->get_doxie_base_url().'/hello.json';
+        $request_url = $this->get_doxie_base_url().self::URI_STATUS;
         $this->logger->info("Calling: GET ".$request_url);
 
         try{
@@ -76,7 +77,7 @@ class DoxieConsumer {
      */
     public function list_scans(){
         $this->are_dependancies_set();
-        $request_url = $this->get_doxie_base_url().".json";
+        $request_url = $this->get_doxie_base_url().self::URI_LIST;
         $this->logger->info("Calling: GET ".$request_url);
 
         try{
@@ -110,7 +111,7 @@ class DoxieConsumer {
         $download_filename .= date("YmdHis", strtotime($doxie_scan->modified));
         $download_filename .= '.'.pathinfo($doxie_scan->name, PATHINFO_EXTENSION);
 
-        $request_url = $this->get_doxie_base_url().$this->pre_slash_string($doxie_scan->name);
+        $request_url = $this->get_doxie_base_url().self::URI_FILE_PREFIX.$this->pre_slash_string($doxie_scan->name);
         $this->logger->info("Calling: GET ".$request_url);
         $this->logger->info("Downloading file to: ".$download_filename);
 
@@ -133,7 +134,7 @@ class DoxieConsumer {
     public function delete_scan($doxie_scan){
         $this->are_dependancies_set();
 
-        $request_url = $this->get_doxie_base_url().$this->pre_slash_string($doxie_scan->name);
+        $request_url = $this->get_doxie_base_url().self::URI_FILE_PREFIX.$this->pre_slash_string($doxie_scan->name);
         $this->logger->info("Calling: DELETE ".$request_url);
 
         try{
@@ -158,7 +159,7 @@ class DoxieConsumer {
         }
         $to_delete = json_encode($to_delete);
 
-        $request_url = $this->get_doxie_base_url().'/delete.json';
+        $request_url = $this->get_doxie_base_url().self::URI_DELETE;
         $this->logger->info("Calling POST ".$request_url."\nPOST_DATA:".print_r($to_delete, true));
         try{
             $response = $this->request_client->post($request_url, null, $to_delete)->send();
@@ -179,6 +180,10 @@ class DoxieConsumer {
         return $doxie_file;
     }
 
+    /**
+     * throws an exception if any of the all dependencies are not set
+     * @throws InvalidArgumentException
+     */
     private function are_dependancies_set(){
         if(!isset($this->request_client)){
             throw new InvalidArgumentException("request_client not set. You must call set_request_client or this service will not work");
