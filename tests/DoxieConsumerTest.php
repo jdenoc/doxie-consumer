@@ -54,8 +54,11 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
 
         $available = $doxie->is_available();
 
-        $this->assertTrue($available, "should have been available");
-        $this->assertTrue($this->logger_has_value($doxie::URI_STATUS), $this->_failed_logger_assert_msg.$doxie::URI_STATUS);
+        $this->assertTrue($available, "should have been available\n".$this->get_logger_records());
+        $this->assertTrue(
+            $this->logger_has_value($doxie::URI_STATUS),
+            $this->_failed_logger_assert_msg.$doxie::URI_STATUS."\n".$this->get_logger_records()
+        );
     }
 
     /**
@@ -71,9 +74,15 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
 
         $available = $doxie->is_available();
 
-        $this->assertFalse($available, 'should not have been available');
-        $this->assertTrue($this->logger_has_value($doxie::URI_STATUS), $this->_failed_logger_assert_msg.$doxie::URI_STATUS);
-        $this->assertTrue($this->logger_has_value('timeout'), $this->_failed_logger_assert_msg."timeout");
+        $this->assertFalse($available, "should not have been available\n".$this->get_logger_records());
+        $this->assertTrue(
+            $this->logger_has_value($doxie::URI_STATUS),
+            $this->_failed_logger_assert_msg.$doxie::URI_STATUS."\n".$this->get_logger_records()
+        );
+        $this->assertTrue(
+            $this->logger_has_value('timeout'),
+            $this->_failed_logger_assert_msg."timeout\n".$this->get_logger_records()
+        );
     }
 
     /**
@@ -90,8 +99,11 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
         // lets assume the is_available method returns true
         $doxie_scans = $doxie->list_scans();
 
-        $this->assertEmpty($doxie_scans, "non-empty response received");
-        $this->assertTrue($this->logger_has_value($doxie::URI_LIST), $this->_failed_logger_assert_msg.$doxie::URI_LIST);
+        $this->assertEmpty($doxie_scans, "non-empty response received\n".$this->get_logger_records());
+        $this->assertTrue(
+            $this->logger_has_value($doxie::URI_LIST),
+            $this->_failed_logger_assert_msg.$doxie::URI_LIST."\n".$this->get_logger_records()
+        );
     }
 
     /**
@@ -110,8 +122,11 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
         // lets assume the is_available method returns true
         $doxie_scans = $doxie->list_scans();
 
-        $this->assertEmpty($doxie_scans, 'non-empty response received');
-        $this->assertTrue($this->logger_has_value($doxie::URI_LIST), $this->_failed_logger_assert_msg.$doxie::URI_LIST);
+        $this->assertEmpty($doxie_scans, "non-empty response received\n".$this->get_logger_records());
+        $this->assertTrue(
+            $this->logger_has_value($doxie::URI_LIST),
+            $this->_failed_logger_assert_msg.$doxie::URI_LIST."\n".$this->get_logger_records()
+        );
     }
 
     /**
@@ -132,11 +147,14 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
         // lets assume the is_available method returns true
         $doxie_scans = $doxie->list_scans();
 
-        $this->assertTrue(is_array($doxie_scans), "non-array response received");
+        $this->assertTrue(is_array($doxie_scans), "non-array response received\n".$this->get_logger_records());
         foreach($doxie_scans as $doxie_scan){
-            $this->assertInstanceOf('DoxieScan', $doxie_scan, "Array element should have been a DoxieScan object");
+            $this->assertInstanceOf('DoxieScan', $doxie_scan, "Array element should have been a DoxieScan object\n".$this->get_logger_records());
         }
-        $this->assertTrue($this->logger_has_value($doxie::URI_LIST), $this->_failed_logger_assert_msg.$doxie::URI_LIST);
+        $this->assertTrue(
+            $this->logger_has_value($doxie::URI_LIST),
+            $this->_failed_logger_assert_msg.$doxie::URI_LIST."\n".$this->get_logger_records()
+        );
     }
 
     /**
@@ -166,8 +184,11 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
         $doxie_scan = $this->generate_generic_doxie_scan();
         $downloaded = $doxie->get_scan($doxie_scan);
 
-        $this->assertFalse($downloaded, "somehow there was a successful response and download");
-        $this->assertTrue($this->logger_has_value($doxie::URI_FILE_PREFIX.$doxie_scan->name), $this->_failed_logger_assert_msg.$doxie::URI_FILE_PREFIX);
+        $this->assertFalse($downloaded, "somehow there was a successful response and download\n".$this->get_logger_records());
+        $this->assertTrue(
+            $this->logger_has_value($doxie::URI_FILE_PREFIX.$doxie_scan->name),
+            $this->_failed_logger_assert_msg.$doxie::URI_FILE_PREFIX."\n".$this->get_logger_records()
+        );
     }
 
     /**
@@ -187,8 +208,11 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
         $doxie_scan = $this->generate_generic_doxie_scan();
         $downloaded = $doxie->get_scan($doxie_scan);
 
-        $this->assertFalse($downloaded, "somehow there was a successful response and download file exists");
-        $this->assertTrue($this->logger_has_value($doxie::URI_FILE_PREFIX.$doxie_scan->name), $this->_failed_logger_assert_msg.$doxie::URI_FILE_PREFIX);
+        $this->assertFalse($downloaded, "somehow there was a successful response and download file exists\n".$this->get_logger_records());
+        $this->assertTrue(
+            $this->logger_has_value($doxie::URI_FILE_PREFIX.$doxie_scan->name),
+            $this->_failed_logger_assert_msg.$doxie::URI_FILE_PREFIX."\n".$this->get_logger_records()
+        );
     }
 
     /**
@@ -208,8 +232,11 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
         $doxie_scan = $this->generate_generic_doxie_scan();
         $downloaded = $doxie->get_scan($doxie_scan);
 
-        $this->assertTrue($downloaded, "somehow there was a successful response and download file exists");
-        $this->assertTrue($this->logger_has_value($doxie::URI_FILE_PREFIX.$doxie_scan->name), $this->_failed_logger_assert_msg.$doxie::URI_FILE_PREFIX);
+        $this->assertTrue($downloaded, "somehow there was a successful response and download file exists\n".$this->get_logger_records());
+        $this->assertTrue(
+            $this->logger_has_value($doxie::URI_FILE_PREFIX.$doxie_scan->name),
+            $this->_failed_logger_assert_msg.$doxie::URI_FILE_PREFIX."\n".$this->get_logger_records()
+        );
     }
 
     /**
@@ -226,8 +253,11 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
         // lets assume the is_available method returns true
         $deleted = $doxie->delete_scans();
 
-        $this->assertFalse($deleted, 'should return false when unable to delete scans');
-        $this->assertTrue($this->logger_has_value($doxie::URI_DELETE), $this->_failed_logger_assert_msg.$doxie::URI_DELETE);
+        $this->assertFalse($deleted, "should return false when unable to delete scans\n".$this->get_logger_records());
+        $this->assertTrue(
+            $this->logger_has_value($doxie::URI_DELETE),
+            $this->_failed_logger_assert_msg.$doxie::URI_DELETE."\n".$this->get_logger_records()
+        );
     }
 
     /**
@@ -267,8 +297,11 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
 
         $deleted = $doxie->delete_scans($records_to_delete);
 
-        $this->assertTrue($deleted, "should return true");
-        $this->assertTrue($this->logger_has_value($doxie::URI_DELETE), $this->_failed_logger_assert_msg.$doxie::URI_DELETE);
+        $this->assertTrue($deleted, "should return true\n".$this->get_logger_records());
+        $this->assertTrue(
+            $this->logger_has_value($doxie::URI_DELETE),
+            $this->_failed_logger_assert_msg.$doxie::URI_DELETE."\n".$this->get_logger_records()
+        );
     }
 
     /**
@@ -285,8 +318,11 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
         $doxie_scan = $this->generate_generic_doxie_scan();
         $deleted = $doxie->delete_scan($doxie_scan);
 
-        $this->assertFalse($deleted, 'should return false');
-        $this->assertTrue($this->logger_has_value($doxie::URI_FILE_PREFIX.$doxie_scan->name), $this->_failed_logger_assert_msg.$doxie::URI_FILE_PREFIX.$doxie_scan->name);
+        $this->assertFalse($deleted, "should return false\n".$this->get_logger_records());
+        $this->assertTrue(
+            $this->logger_has_value($doxie::URI_FILE_PREFIX.$doxie_scan->name),
+            $this->_failed_logger_assert_msg.$doxie::URI_FILE_PREFIX.$doxie_scan->name."\n".$this->get_logger_records()
+        );
     }
 
     /**
@@ -305,8 +341,11 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
         $doxie_scan = $this->generate_generic_doxie_scan();
         $deleted = $doxie->delete_scan($doxie_scan);
 
-        $this->assertFalse($deleted, 'should have returned false');
-        $this->assertTrue($this->logger_has_value($doxie::URI_FILE_PREFIX.$doxie_scan->name), $this->_failed_logger_assert_msg.$doxie::URI_FILE_PREFIX.$doxie_scan->name);
+        $this->assertFalse($deleted, "should have returned false\n".$this->get_logger_records());
+        $this->assertTrue(
+            $this->logger_has_value($doxie::URI_FILE_PREFIX.$doxie_scan->name),
+            $this->_failed_logger_assert_msg.$doxie::URI_FILE_PREFIX.$doxie_scan->name."\n".$this->get_logger_records()
+        );
     }
 
     /**
@@ -326,8 +365,11 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
         $doxie_scan = $this->generate_generic_doxie_scan();
         $deleted = $doxie->delete_scan($doxie_scan);
 
-        $this->assertTrue($deleted, "should have returned true");
-        $this->assertTrue($this->logger_has_value($doxie::URI_FILE_PREFIX.$doxie_scan->name), $this->_failed_logger_assert_msg.$doxie::URI_FILE_PREFIX);
+        $this->assertTrue($deleted, "should have returned true\n".$this->get_logger_records());
+        $this->assertTrue(
+            $this->logger_has_value($doxie::URI_FILE_PREFIX.$doxie_scan->name),
+            $this->_failed_logger_assert_msg.$doxie::URI_FILE_PREFIX."\n".$this->get_logger_records()
+        );
     }
 
      /**
@@ -401,20 +443,22 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @after
-     * Outputs all logger records at the end of each test
+     * Returns all recorded logger records
+     * @return string
      */
-    public function print_logger_records(){
-        print $this->_logger->getName()." Records:\n";
+    public function get_logger_records(){
+        $logger_records_string = $this->_logger->getName()." records:\n";
         $handlers = $this->_logger->getHandlers();
         foreach($handlers as $handler){
             if($handler instanceof \Monolog\Handler\TestHandler){
                 $records = $handler->getRecords();
                 foreach($records as $record){
-                    print "\t".$record['formatted'];
+                    $logger_records_string .= "\t".$record['formatted'];
                 }
             }
         }
+
+        return $logger_records_string;
     }
 
 }
