@@ -1,0 +1,12 @@
+{
+  "name": "jdenoc/doxie-consumer",
+  "require": {
+    "guzzle/guzzle": "^3.9",
+    "vlucas/phpdotenv": "1.0.6",
+    "phine/phar": "~1.0",
+    "monolog/monolog": "^1.22"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^4.8"
+  }
+}

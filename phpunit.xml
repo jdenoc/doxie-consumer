@@ -1,0 +1,11 @@
+<phpunit>
+    <testsuites>
+        <testsuite name="DoxieConsumer Test Suite">
+            <directory>./tests</directory>
+        </testsuite>
+    </testsuites>
+    <php>
+        <env name="DOXIE_BASE_URL" value="http://doxie/scans"/>
+        <env name="DOWNLOAD_LOCATION" value="."/>
+    </php>
+</phpunit>
