@@ -187,10 +187,14 @@ class DoxieConsumer {
      * @throws InvalidArgumentException
      */
     private function are_dependancies_set(){
-        if(!isset($this->request_client)){
-            throw new InvalidArgumentException("request_client not set. You must call set_request_client or this service will not work");
-        } else if(!isset($this->logger)){
+        if(!isset($this->logger) || !($this->logger instanceof Monolog\Logger)){
             throw new InvalidArgumentException("logger not set. You must call set_logger or this service will not work");
+        }
+        if(!isset($this->request_client) || !($this->request_client instanceof Guzzle\Http\Client)){
+            // if we get here, it is safe to assume that the logger has been set
+            $error_msg = "request_client not set. You must call set_request_client or this service will not work";
+            $this->logger->error($error_msg);
+            throw new InvalidArgumentException($error_msg);
         }
     }
 
