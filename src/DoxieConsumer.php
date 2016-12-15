@@ -12,7 +12,7 @@ class DoxieConsumer {
     const URI_STATUS = '/hello.json';
     const URI_LIST = '/scans.json';
     const URI_FILE_PREFIX = '/scans';
-    const URI_DELETE = '/scan/delete.json';
+    const URI_DELETE = '/scans/delete.json';
 
     /**
      * @var Guzzle\Http\Client
