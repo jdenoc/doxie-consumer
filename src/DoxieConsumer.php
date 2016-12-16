@@ -12,7 +12,7 @@ class DoxieConsumer {
     const URI_STATUS = '/hello.json';
     const URI_LIST = '/scans.json';
     const URI_FILE_PREFIX = '/scans';
-    const URI_DELETE = '/scan/delete.json';
+    const URI_DELETE = '/scans/delete.json';
 
     /**
      * @var Guzzle\Http\Client
@@ -42,7 +42,7 @@ class DoxieConsumer {
      * @return bool
      */
     public function is_available(){
-        $this->are_dependancies_set();
+        $this->are_dependencies_set();
         $request_url = $this->get_doxie_base_url().self::URI_STATUS;
         $this->logger->info("Calling: GET ".$request_url);
 
@@ -76,7 +76,7 @@ class DoxieConsumer {
      * @return DoxieScan[]
      */
     public function list_scans(){
-        $this->are_dependancies_set();
+        $this->are_dependencies_set();
         $request_url = $this->get_doxie_base_url().self::URI_LIST;
         $this->logger->info("Calling: GET ".$request_url);
 
@@ -88,7 +88,7 @@ class DoxieConsumer {
                 $decoded_response = array();
             }
         } catch(Exception $e){
-            $this->logger->error($e);
+            $this->logger->error("Failed to list scans\n".$e);
             $decoded_response = array();
         }
 
@@ -105,7 +105,7 @@ class DoxieConsumer {
      * @return string
      */
     public function get_scan($doxie_scan){
-        $this->are_dependancies_set();
+        $this->are_dependencies_set();
         $download_filename = $this->get_download_location().DIRECTORY_SEPARATOR;
         $download_filename .= pathinfo($doxie_scan->name, PATHINFO_FILENAME).'.';
         $download_filename .= date("YmdHis", strtotime($doxie_scan->modified));
@@ -132,7 +132,7 @@ class DoxieConsumer {
      * @return bool
      */
     public function delete_scan($doxie_scan){
-        $this->are_dependancies_set();
+        $this->are_dependencies_set();
 
         $request_url = $this->get_doxie_base_url().self::URI_FILE_PREFIX.$this->pre_slash_string($doxie_scan->name);
         $this->logger->info("Calling: DELETE ".$request_url);
@@ -141,6 +141,7 @@ class DoxieConsumer {
             $response = $this->request_client->delete($request_url)->send();
             return $response->isSuccessful();
         } catch(Exception $e){
+            $this->logger->error("Failed to delete scan ".$doxie_scan."\n".$e);
             return false;
         }
     }
@@ -151,7 +152,7 @@ class DoxieConsumer {
      * @return bool
      */
     public function delete_scans($doxie_scans=array()){
-        $this->are_dependancies_set();
+        $this->are_dependencies_set();
 
         $to_delete = array();
         foreach($doxie_scans as $doxie_scan){
@@ -165,6 +166,7 @@ class DoxieConsumer {
             $response = $this->request_client->post($request_url, null, $to_delete)->send();
             return $response->isSuccessful();
         } catch(Exception $e){
+            $this->logger->error("failed to delete scans\n".$e);
             return false;
         }
     }
@@ -184,11 +186,15 @@ class DoxieConsumer {
      * throws an exception if any of the all dependencies are not set
      * @throws InvalidArgumentException
      */
-    private function are_dependancies_set(){
-        if(!isset($this->request_client)){
-            throw new InvalidArgumentException("request_client not set. You must call set_request_client or this service will not work");
-        } else if(!isset($this->logger)){
+    private function are_dependencies_set(){
+        if(!isset($this->logger)){
             throw new InvalidArgumentException("logger not set. You must call set_logger or this service will not work");
+        }
+        if(!isset($this->request_client)){
+            // if we get here, it is safe to assume that the logger has been set
+            $error_msg = "request_client not set. You must call set_request_client or this service will not work";
+            $this->logger->error($error_msg);
+            throw new InvalidArgumentException($error_msg);
         }
     }
 

@@ -4,7 +4,7 @@ require_once __DIR__.'/vendor/autoload.php';
 use Phine\Phar;
 use Symfony\Component\Finder\Finder;
 
-$phar_filename = 'consumer.phar';
+$phar_filename = 'doxie-consumer.phar';
 
 if(file_exists(__DIR__.DIRECTORY_SEPARATOR.$phar_filename)){
     // if we already have a phar file, lets delete_scan it

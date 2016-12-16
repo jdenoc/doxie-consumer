@@ -28,7 +28,7 @@ $doxie_consumer->set_logger($logger);
 if(!$doxie_consumer->is_available()){
     $exit_msg = "scanner is not currently available";
     $logger->info($exit_msg);
-    die($exit_msg);
+    die('['.date('c').'] '.$exit_msg."\n");
 }
 
 $obtained_scans = array();
