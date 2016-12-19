@@ -12,7 +12,7 @@ $cli->option('v')
     ->boolean();
 
 // load environment variables
-Dotenv::load(__DIR__.'/..');
+Dotenv::load(__DIR__.DIRECTORY_SEPARATOR.'..');
 
 // Setup a logger
 $logger = new Monolog\Logger("doxie_consumer");
@@ -46,7 +46,7 @@ $doxie_consumer->set_logger($logger);
 if(!$doxie_consumer->is_available()){
     $exit_msg = "scanner is not currently available";
     if($verbose_flag){
-        $logger->info($exit_msg);
+        $logger->debug($exit_msg);
         exit;
     } else {
         die('['.date('c').'] '.$exit_msg."\n");

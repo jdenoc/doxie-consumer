@@ -36,6 +36,7 @@ class DoxieConsumer {
      */
     public function set_logger($logger){
         $this->logger = $logger;
+        $this->logger->debug("Logger set");
     }
 
     /**
@@ -44,13 +45,13 @@ class DoxieConsumer {
     public function is_available(){
         $this->are_dependencies_set();
         $request_url = $this->get_doxie_base_url().self::URI_STATUS;
-        $this->logger->info("Calling: GET ".$request_url);
+        $this->logger->debug("Calling: GET ".$request_url);
 
         try{
             $response = $this->request_client->get($request_url)->send();
             return $response->isSuccessful();
         } catch(Exception $e){
-            $this->logger->addInfo("There was a request timeout\n".$e);
+            $this->logger->warning("There was a request timeout\n".$e);
             return false;
         }
     }
@@ -78,7 +79,7 @@ class DoxieConsumer {
     public function list_scans(){
         $this->are_dependencies_set();
         $request_url = $this->get_doxie_base_url().self::URI_LIST;
-        $this->logger->info("Calling: GET ".$request_url);
+        $this->logger->debug("Calling: GET ".$request_url);
 
         try{
             $response = $this->request_client->get($request_url)->send();
@@ -112,8 +113,7 @@ class DoxieConsumer {
         $download_filename .= '.'.pathinfo($doxie_scan->name, PATHINFO_EXTENSION);
 
         $request_url = $this->get_doxie_base_url().self::URI_FILE_PREFIX.$this->pre_slash_string($doxie_scan->name);
-        $this->logger->info("Calling: GET ".$request_url);
-        $this->logger->info("Downloading file to: ".$download_filename);
+        $this->logger->debug("Calling: GET ".$request_url."\nDownloading file to: ".$download_filename);
 
         try{
             $response = $this->request_client->get($request_url)
@@ -135,7 +135,7 @@ class DoxieConsumer {
         $this->are_dependencies_set();
 
         $request_url = $this->get_doxie_base_url().self::URI_FILE_PREFIX.$this->pre_slash_string($doxie_scan->name);
-        $this->logger->info("Calling: DELETE ".$request_url);
+        $this->logger->debug("Calling: DELETE ".$request_url);
 
         try{
             $response = $this->request_client->delete($request_url)->send();
@@ -161,7 +161,7 @@ class DoxieConsumer {
         $to_delete = json_encode($to_delete);
 
         $request_url = $this->get_doxie_base_url().self::URI_DELETE;
-        $this->logger->info("Calling POST ".$request_url."\nPOST_DATA:".print_r($to_delete, true));
+        $this->logger->debug("Calling POST ".$request_url."\nPOST_DATA:".print_r($to_delete, true));
         try{
             $response = $this->request_client->post($request_url, null, $to_delete)->send();
             return $response->isSuccessful();
