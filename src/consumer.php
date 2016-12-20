@@ -3,17 +3,35 @@
 require_once __DIR__.'/../vendor/autoload.php';
 require_once __DIR__.'/DoxieConsumer.php';
 
+// Setup command line options parser
+$cli = new Commando\Command();
+$cli->setHelp("Doxie Consumer\nConnects to a Doxie scanner and grab scans");
+$cli->option('v')
+    ->aka('verbose')
+    ->describedAs("describe what is happening, as it happens")
+    ->boolean();
+
 // load environment variables
-Dotenv::load(__DIR__.'/..');
+Dotenv::load(__DIR__.DIRECTORY_SEPARATOR.'..');
 
 // Setup a logger
 $logger = new Monolog\Logger("doxie_consumer");
 $logger_error_handler = new Monolog\Handler\ErrorLogHandler();
-$logging_filter = new Monolog\Formatter\LineFormatter();
-$logging_filter->ignoreEmptyContextAndExtra();
-$logger_error_handler->setFormatter($logging_filter);
+$log_formatter = new Monolog\Formatter\LineFormatter(null, 'c');    // 'c' is the date format
+$log_formatter->ignoreEmptyContextAndExtra();
+$logger_error_handler->setFormatter($log_formatter);
 $logger_fingers_crossed_handler = new Monolog\Handler\FingersCrossedHandler($logger_error_handler);
 $logger->pushHandler($logger_fingers_crossed_handler);
+
+$cli_flags = $cli->getFlagValues();
+$verbose_flag = (isset($cli_flags['v']) && $cli_flags['v'] === true);
+if($verbose_flag){
+    // When the -v|--verbose flag is provided, add a handler that outputs to the terminal
+    // Grabbed from http://stackoverflow.com/a/25787259
+    $verbose_output_handler = new Monolog\Handler\StreamHandler('php://stdout');
+    $verbose_output_handler->setFormatter($log_formatter);
+    $logger->pushHandler($verbose_output_handler);
+}
 
 // Setup a request client
 $request_client = new Guzzle\Http\Client();
@@ -27,8 +45,12 @@ $doxie_consumer->set_logger($logger);
 
 if(!$doxie_consumer->is_available()){
     $exit_msg = "scanner is not currently available";
-    $logger->info($exit_msg);
-    die('['.date('c').'] '.$exit_msg."\n");
+    if($verbose_flag){
+        $logger->debug($exit_msg);
+        exit;
+    } else {
+        die('['.date('c').'] '.$exit_msg."\n");
+    }
 }
 
 $obtained_scans = array();
