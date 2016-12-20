@@ -202,11 +202,19 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
             $doxie->get_download_location().DIRECTORY_SEPARATOR.$doxie->generate_download_filename($doxie_scan)
         );
 
-        $this->assertFalse($downloaded, "somehow there was a successful response and download\n".$this->get_logger_records());
-        $this->assertTrue(
-            $this->logger_has_value($doxie::URI_FILE_PREFIX.$doxie_scan->name),
-            $this->_failed_logger_assert_msg.$doxie::URI_FILE_PREFIX."\n".$this->get_logger_records()
+        $this->assertFalse($downloaded, "somehow there was a successful response and download file exists\n".$this->get_logger_records());
+
+        $logger_should_have = array(
+            $doxie::URI_FILE_PREFIX.$doxie_scan->name,
+            'Downloading scan to',
+            'Failed to download from'
         );
+        foreach($logger_should_have as $logger_record_snippet){
+            $this->assertTrue(
+                $this->logger_has_value($logger_record_snippet),
+                $this->_failed_logger_assert_msg.$logger_record_snippet."\n".$this->get_logger_records()
+            );
+        }
     }
 
     /**
@@ -230,10 +238,18 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
         );
 
         $this->assertFalse($downloaded, "somehow there was a successful response and download file exists\n".$this->get_logger_records());
-        $this->assertTrue(
-            $this->logger_has_value($doxie::URI_FILE_PREFIX.$doxie_scan->name),
-            $this->_failed_logger_assert_msg.$doxie::URI_FILE_PREFIX."\n".$this->get_logger_records()
+
+        $logger_should_have = array(
+            $doxie::URI_FILE_PREFIX.$doxie_scan->name,
+            'Downloading scan to',
+            'Failed to download from'
         );
+        foreach($logger_should_have as $logger_record_snippet){
+            $this->assertTrue(
+                $this->logger_has_value($logger_record_snippet),
+                $this->_failed_logger_assert_msg.$logger_record_snippet."\n".$this->get_logger_records()
+            );
+        }
     }
 
     /**
@@ -256,10 +272,21 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
             $doxie->get_download_location().DIRECTORY_SEPARATOR.$doxie->generate_download_filename($doxie_scan)
         );
 
-        $this->assertTrue($downloaded, "somehow there was a successful response and download file exists\n".$this->get_logger_records());
-        $this->assertTrue(
-            $this->logger_has_value($doxie::URI_FILE_PREFIX.$doxie_scan->name),
-            $this->_failed_logger_assert_msg.$doxie::URI_FILE_PREFIX."\n".$this->get_logger_records()
+        $this->assertTrue($downloaded, "somehow there was a unsuccessful response and download file does NOT exist\n".$this->get_logger_records());
+
+        $logger_should_have = array(
+            $doxie::URI_FILE_PREFIX.$doxie_scan->name,
+            'Downloading scan to',
+        );
+        foreach($logger_should_have as $logger_record_snippet){
+            $this->assertTrue(
+                $this->logger_has_value($logger_record_snippet),
+                $this->_failed_logger_assert_msg.$logger_record_snippet."\n".$this->get_logger_records()
+            );
+        }
+        $this->assertFalse(
+            $this->logger_has_value("Failed to download from"),
+            $this->_failed_logger_assert_msg."Failed to download from\n".$this->get_logger_records()
         );
     }
 
@@ -281,11 +308,19 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
             $doxie->get_download_location().DIRECTORY_SEPARATOR.'thumbnail_'.$doxie->generate_download_filename($doxie_scan)
         );
 
-        $this->assertFalse($downloaded, "somehow there was a successful response and download\n".$this->get_logger_records());
-        $this->assertTrue(
-            $this->logger_has_value($doxie::URI_THUMBNAIL_PREFIX.$doxie_scan->name),
-            $this->_failed_logger_assert_msg.$doxie::URI_FILE_PREFIX."\n".$this->get_logger_records()
+        $this->assertFalse($downloaded, "somehow there was a successful response and download file exists\n".$this->get_logger_records());
+
+        $logger_should_have = array(
+            $doxie::URI_THUMBNAIL_PREFIX.$doxie_scan->name,
+            'Downloading scan to',
+            'Failed to download from'
         );
+        foreach($logger_should_have as $logger_record_snippet){
+            $this->assertTrue(
+                $this->logger_has_value($logger_record_snippet),
+                $this->_failed_logger_assert_msg.$logger_record_snippet."\n".$this->get_logger_records()
+            );
+        }
     }
 
     /**
@@ -309,10 +344,18 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
         );
 
         $this->assertFalse($downloaded, "somehow there was a successful response and download file exists\n".$this->get_logger_records());
-        $this->assertTrue(
-            $this->logger_has_value($doxie::URI_THUMBNAIL_PREFIX.$doxie_scan->name),
-            $this->_failed_logger_assert_msg.$doxie::URI_FILE_PREFIX."\n".$this->get_logger_records()
+
+        $logger_should_have = array(
+            $doxie::URI_THUMBNAIL_PREFIX.$doxie_scan->name,
+            'Downloading scan to',
+            'Failed to download from'
         );
+        foreach($logger_should_have as $logger_record_snippet){
+            $this->assertTrue(
+                $this->logger_has_value($logger_record_snippet),
+                $this->_failed_logger_assert_msg.$logger_record_snippet."\n".$this->get_logger_records()
+            );
+        }
     }
 
     /**
@@ -336,10 +379,21 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
         );
 
         $this->assertTrue($downloaded, "somehow there was a successful response and download file exists\n".$this->get_logger_records());
-        $this->assertTrue(
-            $this->logger_has_value($doxie::URI_THUMBNAIL_PREFIX.$doxie_scan->name),
-            $this->_failed_logger_assert_msg.$doxie::URI_FILE_PREFIX."\n".$this->get_logger_records()
+        $logger_should_have = array(
+            $doxie::URI_THUMBNAIL_PREFIX.$doxie_scan->name,
+            'Downloading scan to',
         );
+        foreach($logger_should_have as $logger_record_snippet){
+            $this->assertTrue(
+                $this->logger_has_value($logger_record_snippet),
+                $this->_failed_logger_assert_msg.$logger_record_snippet."\n".$this->get_logger_records()
+            );
+        }
+        $this->assertFalse(
+            $this->logger_has_value("Failed to download from"),
+            $this->_failed_logger_assert_msg."Failed to download from\n".$this->get_logger_records()
+        );
+
     }
 
     /**
