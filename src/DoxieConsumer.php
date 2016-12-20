@@ -12,6 +12,7 @@ class DoxieConsumer {
     const URI_STATUS = '/hello.json';
     const URI_LIST = '/scans.json';
     const URI_FILE_PREFIX = '/scans';
+    const URI_THUMBNAIL_PREFIX = '/thumbnails';
     const URI_DELETE = '/scans/delete.json';
 
     /**
@@ -73,6 +74,17 @@ class DoxieConsumer {
     }
 
     /**
+     * @param DoxieScan $doxie_scan
+     * @return string
+     */
+    public function generate_download_filename($doxie_scan){
+        $download_filename  = pathinfo($doxie_scan->name, PATHINFO_FILENAME).'.';
+        $download_filename .= date("YmdHis", strtotime($doxie_scan->modified));
+        $download_filename .= '.'.pathinfo($doxie_scan->name, PATHINFO_EXTENSION);
+        return $download_filename;
+    }
+
+    /**
      * GET /scans.json
      * @return DoxieScan[]
      */
@@ -103,25 +115,42 @@ class DoxieConsumer {
     /**
      * GET /scans/$filename
      * @param DoxieScan $doxie_scan
+     * @param string $download_location
      * @return string
      */
-    public function get_scan($doxie_scan){
+    public function get_scan($doxie_scan, $download_location){
         $this->are_dependencies_set();
-        $download_filename = $this->get_download_location().DIRECTORY_SEPARATOR;
-        $download_filename .= pathinfo($doxie_scan->name, PATHINFO_FILENAME).'.';
-        $download_filename .= date("YmdHis", strtotime($doxie_scan->modified));
-        $download_filename .= '.'.pathinfo($doxie_scan->name, PATHINFO_EXTENSION);
-
         $request_url = $this->get_doxie_base_url().self::URI_FILE_PREFIX.$this->pre_slash_string($doxie_scan->name);
-        $this->logger->debug("Calling: GET ".$request_url."\nDownloading file to: ".$download_filename);
+        $this->logger->debug("Calling: GET ".$request_url."\nDownloading scan to: ".$download_location);
 
         try{
             $response = $this->request_client->get($request_url)
-                ->setResponseBody($download_filename)
+                ->setResponseBody($download_location)
                 ->send();
-            return ($response->isSuccessful() && file_exists($download_filename));
+            return ($response->isSuccessful() && file_exists($download_location));
         } catch(Exception $e){
             $this->logger->error("Failed to download file\n".$e);
+            return false;
+        }
+    }
+
+    /**
+     * @param DoxieScan $doxie_scan
+     * @param string $download_location
+     * @return bool
+     */
+    public function get_thumbnail($doxie_scan, $download_location){
+        $this->are_dependencies_set();
+        $request_url = $this->get_doxie_base_url().self::URI_THUMBNAIL_PREFIX.$this->pre_slash_string($doxie_scan->name);
+        $this->logger->debug("Calling: GET ".$request_url);
+
+        try{
+            $response = $this->request_client->get($request_url)
+                ->setResponseBody($download_location)
+                ->send();
+            return ($response->isSuccessful() && file_exists($download_location));
+        } catch(Exception $e){
+            $this->logger->error("Failed to download thumbnail");
             return false;
         }
     }
