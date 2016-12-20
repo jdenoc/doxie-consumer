@@ -170,6 +170,21 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
+     * tests generate_download_filename generates and expected filename
+     * @test
+     */
+    public function generate_download_filename(){
+        $doxie_scan = $this->generate_generic_doxie_scan();
+
+        $download_filename  = pathinfo($doxie_scan->name, PATHINFO_FILENAME).'.';
+        $download_filename .= date("YmdHis", strtotime($doxie_scan->modified));
+        $download_filename .= '.'.pathinfo($doxie_scan->name, PATHINFO_EXTENSION);
+
+        $doxie = new DoxieConsumer();
+        $this->assertEquals($download_filename, $doxie->generate_download_filename($doxie_scan), "generated filename doesn't match what was expected");
+    }
+
+    /**
      * tests get_scan method when service is unavailable
      * @test
      */
@@ -182,7 +197,10 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
 
         // lets assume the is_available method returns true
         $doxie_scan = $this->generate_generic_doxie_scan();
-        $downloaded = $doxie->get_scan($doxie_scan);
+        $downloaded = $doxie->get_scan(
+            $doxie_scan,
+            $doxie->get_download_location().DIRECTORY_SEPARATOR.$doxie->generate_download_filename($doxie_scan)
+        );
 
         $this->assertFalse($downloaded, "somehow there was a successful response and download\n".$this->get_logger_records());
         $this->assertTrue(
@@ -206,7 +224,10 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
 
         // lets assume the is_available method returns true
         $doxie_scan = $this->generate_generic_doxie_scan();
-        $downloaded = $doxie->get_scan($doxie_scan);
+        $downloaded = $doxie->get_scan(
+            $doxie_scan,
+            $doxie->get_download_location().DIRECTORY_SEPARATOR.$doxie->generate_download_filename($doxie_scan)
+        );
 
         $this->assertFalse($downloaded, "somehow there was a successful response and download file exists\n".$this->get_logger_records());
         $this->assertTrue(
@@ -230,11 +251,93 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
 
         // lets assume the is_available method returns true
         $doxie_scan = $this->generate_generic_doxie_scan();
-        $downloaded = $doxie->get_scan($doxie_scan);
+        $downloaded = $doxie->get_scan(
+            $doxie_scan,
+            $doxie->get_download_location().DIRECTORY_SEPARATOR.$doxie->generate_download_filename($doxie_scan)
+        );
 
         $this->assertTrue($downloaded, "somehow there was a successful response and download file exists\n".$this->get_logger_records());
         $this->assertTrue(
             $this->logger_has_value($doxie::URI_FILE_PREFIX.$doxie_scan->name),
+            $this->_failed_logger_assert_msg.$doxie::URI_FILE_PREFIX."\n".$this->get_logger_records()
+        );
+    }
+
+    /**
+     * tests get_scan method when service is unavailable
+     * @test
+     */
+    public function get_thumbnail_unavailable(){
+        $request_client = $this->generate_connection_timeone_guzzle_mock();
+
+        $doxie = new DoxieConsumer();
+        $doxie->set_request_client($request_client);
+        $doxie->set_logger($this->_logger);
+
+        // lets assume the is_available method returns true
+        $doxie_scan = $this->generate_generic_doxie_scan();
+        $downloaded = $doxie->get_thumbnail(
+            $doxie_scan,
+            $doxie->get_download_location().DIRECTORY_SEPARATOR.'thumbnail_'.$doxie->generate_download_filename($doxie_scan)
+        );
+
+        $this->assertFalse($downloaded, "somehow there was a successful response and download\n".$this->get_logger_records());
+        $this->assertTrue(
+            $this->logger_has_value($doxie::URI_THUMBNAIL_PREFIX.$doxie_scan->name),
+            $this->_failed_logger_assert_msg.$doxie::URI_FILE_PREFIX."\n".$this->get_logger_records()
+        );
+    }
+
+    /**
+     * tests get_scan method when scan is not found
+     * @test
+     */
+    public function get_thumbnail_not_found(){
+        $this->_guzzle_plugin_mock->addResponse(new Guzzle\Http\Message\Response(404));
+        $request_client = new Guzzle\Http\Client();
+        $request_client->addSubscriber($this->_guzzle_plugin_mock);
+
+        $doxie = new DoxieConsumer();
+        $doxie->set_request_client($request_client);
+        $doxie->set_logger($this->_logger);
+
+        // lets assume the is_available method returns true
+        $doxie_scan = $this->generate_generic_doxie_scan();
+        $downloaded = $doxie->get_thumbnail(
+            $doxie_scan,
+            $doxie->get_download_location().DIRECTORY_SEPARATOR.'thumbnail_'.$doxie->generate_download_filename($doxie_scan)
+        );
+
+        $this->assertFalse($downloaded, "somehow there was a successful response and download file exists\n".$this->get_logger_records());
+        $this->assertTrue(
+            $this->logger_has_value($doxie::URI_THUMBNAIL_PREFIX.$doxie_scan->name),
+            $this->_failed_logger_assert_msg.$doxie::URI_FILE_PREFIX."\n".$this->get_logger_records()
+        );
+    }
+
+    /**
+     * tests get_scan method during a successful response
+     * @test
+     */
+    public function get_thumbnail_success(){
+        $this->_guzzle_plugin_mock->addResponse(new Guzzle\Http\Message\Response(200));
+        $request_client = new Guzzle\Http\Client();
+        $request_client->addSubscriber($this->_guzzle_plugin_mock);
+
+        $doxie = new DoxieConsumer();
+        $doxie->set_request_client($request_client);
+        $doxie->set_logger($this->_logger);
+
+        // lets assume the is_available method returns true
+        $doxie_scan = $this->generate_generic_doxie_scan();
+        $downloaded = $doxie->get_thumbnail(
+            $doxie_scan,
+            $doxie->get_download_location().DIRECTORY_SEPARATOR.'thumbnail_'.$doxie->generate_download_filename($doxie_scan)
+        );
+
+        $this->assertTrue($downloaded, "somehow there was a successful response and download file exists\n".$this->get_logger_records());
+        $this->assertTrue(
+            $this->logger_has_value($doxie::URI_THUMBNAIL_PREFIX.$doxie_scan->name),
             $this->_failed_logger_assert_msg.$doxie::URI_FILE_PREFIX."\n".$this->get_logger_records()
         );
     }
