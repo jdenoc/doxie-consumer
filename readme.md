@@ -17,7 +17,3 @@ cp .env.example .env
 composer install --no-dev
 php build.php         # this may take some time. grab yourself a drink
 ```
-
-## Requirements
-- php >= 5.5
-- php curl extension
