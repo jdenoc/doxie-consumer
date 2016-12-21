@@ -75,8 +75,12 @@ foreach($doxie_scans as $doxie_scan){
         $doxie_consumer->get_download_location().DIRECTORY_SEPARATOR.$doxie_consumer->generate_download_filename($doxie_scan)
     );
     if($downloaded){
-        $obtained_scans[] = $doxie_scan;
+        $doxie_consumer->delete_scan($doxie_scan);
+    } else {
+        if(!$doxie_consumer->is_available()){
+            // scanner is no longer available, break out of loop and stop consuming scans
+            $logger->warning("Scanner is no longer available. Consumer stopping");
+            break;
+        }
     }
 }
-
-$doxie_consumer->delete_scans($obtained_scans);
