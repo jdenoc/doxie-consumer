@@ -7,7 +7,7 @@ use Symfony\Component\Finder\Finder;
 $phar_filename = 'doxie-consumer.phar';
 
 if(file_exists(__DIR__.DIRECTORY_SEPARATOR.$phar_filename)){
-    // if we already have a phar file, lets delete_scan it
+    // if we already have a phar file, lets delete it
     unlink(__DIR__.DIRECTORY_SEPARATOR.$phar_filename);
 }
 
@@ -28,7 +28,7 @@ $vendor_iterator = Finder::create()
     ->files()
     ->name('*.php')
     ->name('cacert.pem')    // needed for guzzle to work
-    ->exclude(array('tests', 'Tests', 'docs'))
+    ->exclude(array('tests', 'Tests', 'docs', 'doc', 'examples', 'build'))
     ->in(__DIR__.DIRECTORY_SEPARATOR.'vendor');
 
 foreach($vendor_iterator as $vendor_file){

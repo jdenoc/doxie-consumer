@@ -1,5 +1,9 @@
 {
   "name": "jdenoc/doxie-consumer",
+  "authors": [{
+    "name":"jdenoc",
+    "email":"jdenoc@gmail.com"
+  }],
   "require": {
     "guzzle/guzzle": "^3.9",
     "vlucas/phpdotenv": "1.0.6",
