@@ -15,7 +15,7 @@ $cli->option('v')
 Dotenv::load(__DIR__.DIRECTORY_SEPARATOR.'..');
 
 // Setup a logger
-$logger = new Monolog\Logger("doxie-consumer");
+$logger = new Monolog\Logger("doxie_consumer");
 $logger_error_handler = new Monolog\Handler\ErrorLogHandler();
 $log_formatter = new Monolog\Formatter\LineFormatter(null, 'c');    // 'c' is the date format
 $log_formatter->ignoreEmptyContextAndExtra();
@@ -58,7 +58,7 @@ $doxie_scans = $doxie_consumer->list_scans();
 foreach($doxie_scans as $doxie_scan){
     // there's a bug that downloading scans won't reset the scanner's auto-off timer.
     // You can work around it by occasionally getting a list of scans via the API while you're downloading,
-    // which will reset the auto-off timer. - Doxie Support [2016-12-15]
+    // which will reset the auto-off timer. -Doxie Support [2016-12-15]
     $doxie_consumer->list_scans();
 
     // The scanner should't fall asleep when calling the scan.json command, but it is.
