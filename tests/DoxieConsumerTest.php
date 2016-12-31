@@ -176,8 +176,8 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
     public function generate_download_filename(){
         $doxie_scan = $this->generate_generic_doxie_scan();
 
-        $download_filename  = pathinfo($doxie_scan->name, PATHINFO_FILENAME).'.';
-        $download_filename .= date("YmdHis", strtotime($doxie_scan->modified));
+        $download_filename  = date("YmdHis", strtotime($doxie_scan->modified)).'.';
+        $download_filename .= pathinfo($doxie_scan->name, PATHINFO_FILENAME);
         $download_filename .= '.'.pathinfo($doxie_scan->name, PATHINFO_EXTENSION);
 
         $doxie = new DoxieConsumer();
