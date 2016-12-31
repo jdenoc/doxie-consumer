@@ -78,8 +78,8 @@ class DoxieConsumer {
      * @return string
      */
     public function generate_download_filename($doxie_scan){
-        $download_filename  = pathinfo($doxie_scan->name, PATHINFO_FILENAME).'.';
-        $download_filename .= date("YmdHis", strtotime($doxie_scan->modified));
+        $download_filename  = date("YmdHis", strtotime($doxie_scan->modified)).'.';
+        $download_filename .= pathinfo($doxie_scan->name, PATHINFO_FILENAME);
         $download_filename .= '.'.pathinfo($doxie_scan->name, PATHINFO_EXTENSION);
         return $download_filename;
     }
