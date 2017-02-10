@@ -15,7 +15,11 @@ class DoxieScan {
         }
         $this->name = $doxie_item['name'];
         $this->size = $doxie_item['size'];
-        $this->modified = $doxie_item['modified'];
+        if(empty($doxie_item['modified'])){
+            $this->modified = date('Y-m-d H:i:s');
+        } else {
+            $this->modified = $doxie_item['modified'];
+        }
     }
 
     public function __get($key){
