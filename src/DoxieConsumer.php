@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ .'/../vendor/autoload.php';
+require_once __DIR__.'/../vendor/autoload.php';
 require_once __DIR__.'/DoxieScan.php';
 
 /**
@@ -206,6 +206,12 @@ class DoxieConsumer {
         }
     }
 
+    /**
+     * Downloads file in URL to specified location
+     * @param string $request_url
+     * @param string $download_location
+     * @return bool
+     */
     private function get_file($request_url, $download_location){
         $this->are_dependencies_set();
         $this->logger->debug("Calling: GET ".$request_url."\nDownloading scan to: ".$download_location);
