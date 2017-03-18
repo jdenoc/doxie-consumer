@@ -52,7 +52,7 @@ class DoxieConsumer {
             $response = $this->request_client->get($request_url)->send();
             return $response->isSuccessful();
         } catch(Exception $e){
-            $this->logger->warning("There was a request timeout\n".$e);
+            $this->logger->warning("There was an error checking scanner availability\n".$e->getMessage());
             return false;
         }
     }
@@ -101,7 +101,7 @@ class DoxieConsumer {
                 $decoded_response = array();
             }
         } catch(Exception $e){
-            $this->logger->error("Failed to list scans\n".$e);
+            $this->logger->error("Failed to list scans\n".$e->getMessage());
             $decoded_response = array();
         }
 
@@ -149,7 +149,7 @@ class DoxieConsumer {
             $response = $this->request_client->delete($request_url)->send();
             return $response->isSuccessful();
         } catch(Exception $e){
-            $this->logger->error("Failed to delete scan ".$doxie_scan."\n".$e);
+            $this->logger->error("Failed to delete scan ".$doxie_scan."\n".$e->getMessage());
             return false;
         }
     }
@@ -174,7 +174,7 @@ class DoxieConsumer {
             $response = $this->request_client->post($request_url, null, $to_delete)->send();
             return $response->isSuccessful();
         } catch(Exception $e){
-            $this->logger->error("failed to delete scans\n".$e);
+            $this->logger->error("failed to delete scans\n".$e->getMessage());
             return false;
         }
     }
@@ -226,4 +226,5 @@ class DoxieConsumer {
             return false;
         }
     }
+
 }
