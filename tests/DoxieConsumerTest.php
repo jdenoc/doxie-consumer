@@ -80,7 +80,7 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
             $this->_failed_logger_assert_msg.$doxie::URI_STATUS."\n".$this->get_logger_records()
         );
         $this->assertTrue(
-            $this->logger_has_value('timeout'),
+            $this->logger_has_value('error checking scanner availability'),
             $this->_failed_logger_assert_msg."timeout\n".$this->get_logger_records()
         );
     }
