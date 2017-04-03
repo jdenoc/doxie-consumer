@@ -35,8 +35,8 @@ if($verbose_flag){
 
 // Setup a request client
 $request_client = new Guzzle\Http\Client();
-$request_client->setDefaultOption('timeout', 30);
-$request_client->setDefaultOption('connect_timeout', 3);
+$request_client->setDefaultOption('timeout', 300);          // 5 minute request timeout
+$request_client->setDefaultOption('connect_timeout', 3);    // 3 second connection timeout
 
 // Initialise doxie consumer
 $doxie_consumer = new DoxieConsumer();
