@@ -1,9 +1,11 @@
 <?php
 
-require_once __DIR__.'/../vendor/autoload.php';
-require_once __DIR__.'/../src/DoxieConsumer.php';
+namespace jdenoc\DoxieConsumer\Tests;
 
-class DoxieScanTest extends PHPUnit_Framework_TestCase {
+use PHPUnit_Framework_TestCase as PhpUnitTestCase;
+use jdenoc\DoxieConsumer\DoxieScan;
+
+class DoxieScanTest extends PhpUnitTestCase {
 
     private function generate_test_doxie_scan_array(){
         return array(
@@ -48,7 +50,6 @@ class DoxieScanTest extends PHPUnit_Framework_TestCase {
         $doxie_scan_object = new DoxieScan($test_doxie_scan_array);
         $this->assertEquals($test_doxie_scan_json, (string) $doxie_scan_object);
     }
-
 
     /**
      * @test

@@ -1,9 +1,14 @@
 <?php
 
-require_once __DIR__.'/../vendor/autoload.php';
-require_once __DIR__.'/../src/DoxieConsumer.php';
+namespace jdenoc\DoxieConsumer\Tests;
 
-class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
+use PHPUnit_Framework_TestCase as PhpUnitTestCase;
+use jdenoc\DoxieConsumer\DoxieConsumer;
+use jdenoc\DoxieConsumer\DoxieScan;
+use Guzzle;
+use Monolog;
+
+class DoxieConsumerTest extends PhpUnitTestCase {
 
     /**
      * @var string
@@ -149,7 +154,7 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
 
         $this->assertTrue(is_array($doxie_scans), "non-array response received\n".$this->get_logger_records());
         foreach($doxie_scans as $doxie_scan){
-            $this->assertInstanceOf('DoxieScan', $doxie_scan, "Array element should have been a DoxieScan object\n".$this->get_logger_records());
+            $this->assertInstanceOf('jdenoc\DoxieConsumer\DoxieScan', $doxie_scan, "Array element should have been a DoxieScan object\n".$this->get_logger_records());
         }
         $this->assertTrue(
             $this->logger_has_value($doxie::URI_LIST),
@@ -532,7 +537,7 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
      /**
       * tests that DoxieConsumer has received a request client dependency
       * @test
-      * @expectedException InvalidArgumentException
+      * @expectedException \InvalidArgumentException
       */
     public function request_client_not_set(){
         $doxie = new DoxieConsumer();
@@ -543,7 +548,7 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
     /**
      * tests that DoxieConsumer has received a logger dependency
      * @test
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      */
     public function logger_not_set(){
         $this->_guzzle_plugin_mock->addResponse(new Guzzle\Http\Message\Response(200));
@@ -582,7 +587,7 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
     private function logger_has_value($message){
         $handlers = $this->_logger->getHandlers();
         foreach($handlers as $handler){
-            if($handler instanceof \Monolog\Handler\TestHandler){
+            if($handler instanceof Monolog\Handler\TestHandler){
                 return (
                     $handler->hasInfoThatContains($message) ||
                     $handler->hasDebugThatContains($message) ||
@@ -607,7 +612,7 @@ class DoxieConsumerTest extends PHPUnit_Framework_TestCase {
         $logger_records_string = $this->_logger->getName()." records:\n";
         $handlers = $this->_logger->getHandlers();
         foreach($handlers as $handler){
-            if($handler instanceof \Monolog\Handler\TestHandler){
+            if($handler instanceof Monolog\Handler\TestHandler){
                 $records = $handler->getRecords();
                 foreach($records as $record){
                     $logger_records_string .= "\t".$record['formatted'];
