@@ -1,7 +1,9 @@
 <?php
 
-require_once __DIR__.'/../vendor/autoload.php';
-require_once __DIR__.'/DoxieScan.php';
+namespace jdenoc\DoxieConsumer;
+
+use Guzzle;
+use Monolog;
 
 /**
  * DOXIE API Documentation
@@ -51,7 +53,7 @@ class DoxieConsumer {
         try{
             $response = $this->request_client->get($request_url)->send();
             return $response->isSuccessful();
-        } catch(Exception $e){
+        } catch(\Exception $e){
             $this->logger->warning("There was an error checking scanner availability\n".$e->getMessage());
             return false;
         }
@@ -100,7 +102,7 @@ class DoxieConsumer {
             if(is_null($decoded_response)){
                 $decoded_response = array();
             }
-        } catch(Exception $e){
+        } catch(\Exception $e){
             $this->logger->error("Failed to list scans\n".$e->getMessage());
             $decoded_response = array();
         }
@@ -148,7 +150,7 @@ class DoxieConsumer {
         try{
             $response = $this->request_client->delete($request_url)->send();
             return $response->isSuccessful();
-        } catch(Exception $e){
+        } catch(\Exception $e){
             $this->logger->error("Failed to delete scan ".$doxie_scan."\n".$e->getMessage());
             return false;
         }
@@ -173,7 +175,7 @@ class DoxieConsumer {
         try{
             $response = $this->request_client->post($request_url, null, $to_delete)->send();
             return $response->isSuccessful();
-        } catch(Exception $e){
+        } catch(\Exception $e){
             $this->logger->error("failed to delete scans\n".$e->getMessage());
             return false;
         }
@@ -192,17 +194,17 @@ class DoxieConsumer {
 
     /**
      * throws an exception if any of the all dependencies are not set
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     private function are_dependencies_set(){
         if(!isset($this->logger)){
-            throw new InvalidArgumentException("logger not set. You must call set_logger or this service will not work");
+            throw new \InvalidArgumentException("logger not set. You must call set_logger or this service will not work");
         }
         if(!isset($this->request_client)){
             // if we get here, it is safe to assume that the logger has been set
             $error_msg = "request_client not set. You must call set_request_client or this service will not work";
             $this->logger->error($error_msg);
-            throw new InvalidArgumentException($error_msg);
+            throw new \InvalidArgumentException($error_msg);
         }
     }
 
@@ -221,7 +223,7 @@ class DoxieConsumer {
                 ->setResponseBody($download_location)
                 ->send();
             return ($response->isSuccessful() && file_exists($download_location));
-        } catch(Exception $e){
+        } catch(\Exception $e){
             $this->logger->error("Failed to download from ".$request_url." to ".$download_location);
             return false;
         }
