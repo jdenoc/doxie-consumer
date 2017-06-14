@@ -5,7 +5,7 @@
         </testsuite>
     </testsuites>
     <php>
-        <env name="DOXIE_BASE_URL" value="http://doxie"/>
+        <env name="DOXIE_PHYSICAL_ADDRESS" value="A1-2B-C3-4D-E5-6F"/>
         <env name="DOWNLOAD_LOCATION" value="."/>
     </php>
 </phpunit>
