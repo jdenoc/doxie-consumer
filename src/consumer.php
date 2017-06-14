@@ -38,10 +38,14 @@ $request_client = new Guzzle\Http\Client();
 $request_client->setDefaultOption('timeout', 300);          // 5 minute request timeout
 $request_client->setDefaultOption('connect_timeout', 3);    // 3 second connection timeout
 
+// setup network scanner
+$network_scanner = new jdenoc\NetworkScanner\NetworkScanner();
+
 // Initialise doxie consumer
-$doxie_consumer = new DoxieConsumer();
+$doxie_consumer = new jdenoc\DoxieConsumer\DoxieConsumer();
 $doxie_consumer->set_request_client($request_client);
 $doxie_consumer->set_logger($logger);
+$doxie_consumer->set_network_scanner($network_scanner);
 
 if(!$doxie_consumer->is_available()){
     $exit_msg = "scanner is not currently available";

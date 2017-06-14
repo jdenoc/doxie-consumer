@@ -5,6 +5,7 @@ namespace jdenoc\DoxieConsumer\Tests;
 use PHPUnit_Framework_TestCase as PhpUnitTestCase;
 use jdenoc\DoxieConsumer\DoxieConsumer;
 use jdenoc\DoxieConsumer\DoxieScan;
+use jdenoc\NetworkScanner;
 use Guzzle;
 use Monolog;
 
@@ -26,6 +27,11 @@ class DoxieConsumerTest extends PhpUnitTestCase {
     private $_logger;
 
     /**
+     * @var NetworkScanner\NetworkScanner
+     */
+    private $_network_scanner;
+
+    /**
      * @before
      */
     public function setup_guzzle_mock_plugin(){
@@ -45,6 +51,15 @@ class DoxieConsumerTest extends PhpUnitTestCase {
     }
 
     /**
+     * @before
+     */
+    public function setup_network_scanner(){
+        $this->_network_scanner = new NetworkScanner\Tests\NetworkScanner();
+        $this->_network_scanner->set_detectable_os(NetworkScanner\NetworkScanner::OS_LINUX);
+        $this->_network_scanner->add_mac_address_to_response('127.0.0.1', getenv("DOXIE_PHYSICAL_ADDRESS"));
+    }
+
+    /**
      * tests is_available method is available
      * @test
      */
@@ -56,6 +71,7 @@ class DoxieConsumerTest extends PhpUnitTestCase {
         $doxie = new DoxieConsumer();
         $doxie->set_request_client($request_client);
         $doxie->set_logger($this->_logger);
+        $doxie->set_network_scanner($this->_network_scanner);
 
         $available = $doxie->is_available();
 
@@ -76,6 +92,7 @@ class DoxieConsumerTest extends PhpUnitTestCase {
         $doxie = new DoxieConsumer();
         $doxie->set_request_client($request_client);
         $doxie->set_logger($this->_logger);
+        $doxie->set_network_scanner($this->_network_scanner);
 
         $available = $doxie->is_available();
 
@@ -100,6 +117,7 @@ class DoxieConsumerTest extends PhpUnitTestCase {
         $doxie = new DoxieConsumer();
         $doxie->set_request_client($request_client);
         $doxie->set_logger($this->_logger);
+        $doxie->set_network_scanner($this->_network_scanner);
 
         // lets assume the is_available method returns true
         $doxie_scans = $doxie->list_scans();
@@ -123,6 +141,7 @@ class DoxieConsumerTest extends PhpUnitTestCase {
         $doxie = new DoxieConsumer();
         $doxie->set_request_client($request_client);
         $doxie->set_logger($this->_logger);
+        $doxie->set_network_scanner($this->_network_scanner);
 
         // lets assume the is_available method returns true
         $doxie_scans = $doxie->list_scans();
@@ -148,6 +167,7 @@ class DoxieConsumerTest extends PhpUnitTestCase {
         $doxie = new DoxieConsumer();
         $doxie->set_request_client($request_client);
         $doxie->set_logger($this->_logger);
+        $doxie->set_network_scanner($this->_network_scanner);
 
         // lets assume the is_available method returns true
         $doxie_scans = $doxie->list_scans();
@@ -199,6 +219,7 @@ class DoxieConsumerTest extends PhpUnitTestCase {
         $doxie = new DoxieConsumer();
         $doxie->set_request_client($request_client);
         $doxie->set_logger($this->_logger);
+        $doxie->set_network_scanner($this->_network_scanner);
 
         // lets assume the is_available method returns true
         $doxie_scan = $this->generate_generic_doxie_scan();
@@ -234,6 +255,7 @@ class DoxieConsumerTest extends PhpUnitTestCase {
         $doxie = new DoxieConsumer();
         $doxie->set_request_client($request_client);
         $doxie->set_logger($this->_logger);
+        $doxie->set_network_scanner($this->_network_scanner);
 
         // lets assume the is_available method returns true
         $doxie_scan = $this->generate_generic_doxie_scan();
@@ -269,6 +291,7 @@ class DoxieConsumerTest extends PhpUnitTestCase {
         $doxie = new DoxieConsumer();
         $doxie->set_request_client($request_client);
         $doxie->set_logger($this->_logger);
+        $doxie->set_network_scanner($this->_network_scanner);
 
         // lets assume the is_available method returns true
         $doxie_scan = $this->generate_generic_doxie_scan();
@@ -305,6 +328,7 @@ class DoxieConsumerTest extends PhpUnitTestCase {
         $doxie = new DoxieConsumer();
         $doxie->set_request_client($request_client);
         $doxie->set_logger($this->_logger);
+        $doxie->set_network_scanner($this->_network_scanner);
 
         // lets assume the is_available method returns true
         $doxie_scan = $this->generate_generic_doxie_scan();
@@ -340,6 +364,7 @@ class DoxieConsumerTest extends PhpUnitTestCase {
         $doxie = new DoxieConsumer();
         $doxie->set_request_client($request_client);
         $doxie->set_logger($this->_logger);
+        $doxie->set_network_scanner($this->_network_scanner);
 
         // lets assume the is_available method returns true
         $doxie_scan = $this->generate_generic_doxie_scan();
@@ -375,6 +400,7 @@ class DoxieConsumerTest extends PhpUnitTestCase {
         $doxie = new DoxieConsumer();
         $doxie->set_request_client($request_client);
         $doxie->set_logger($this->_logger);
+        $doxie->set_network_scanner($this->_network_scanner);
 
         // lets assume the is_available method returns true
         $doxie_scan = $this->generate_generic_doxie_scan();
@@ -411,6 +437,7 @@ class DoxieConsumerTest extends PhpUnitTestCase {
         $doxie = new DoxieConsumer();
         $doxie->set_request_client($request_client);
         $doxie->set_logger($this->_logger);
+        $doxie->set_network_scanner($this->_network_scanner);
 
         // lets assume the is_available method returns true
         $deleted = $doxie->delete_scans();
@@ -456,6 +483,7 @@ class DoxieConsumerTest extends PhpUnitTestCase {
         $doxie = new DoxieConsumer();
         $doxie->set_request_client($request_client);
         $doxie->set_logger($this->_logger);
+        $doxie->set_network_scanner($this->_network_scanner);
 
         $deleted = $doxie->delete_scans($records_to_delete);
 
@@ -476,6 +504,7 @@ class DoxieConsumerTest extends PhpUnitTestCase {
         $doxie = new DoxieConsumer();
         $doxie->set_request_client($request_client);
         $doxie->set_logger($this->_logger);
+        $doxie->set_network_scanner($this->_network_scanner);
 
         $doxie_scan = $this->generate_generic_doxie_scan();
         $deleted = $doxie->delete_scan($doxie_scan);
@@ -499,6 +528,7 @@ class DoxieConsumerTest extends PhpUnitTestCase {
         $doxie = new DoxieConsumer();
         $doxie->set_request_client($request_client);
         $doxie->set_logger($this->_logger);
+        $doxie->set_network_scanner($this->_network_scanner);
 
         $doxie_scan = $this->generate_generic_doxie_scan();
         $deleted = $doxie->delete_scan($doxie_scan);
@@ -522,6 +552,7 @@ class DoxieConsumerTest extends PhpUnitTestCase {
         $doxie = new DoxieConsumer();
         $doxie->set_request_client($request_client);
         $doxie->set_logger($this->_logger);
+        $doxie->set_network_scanner($this->_network_scanner);
 
         // lets assume the is_available method returns true
         $doxie_scan = $this->generate_generic_doxie_scan();
