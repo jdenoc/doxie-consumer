@@ -1,5 +1,7 @@
 <?php
 
+namespace jdenoc\DoxieConsumer;
+
 class DoxieScan {
 
     private $name;

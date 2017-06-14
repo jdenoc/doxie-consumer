@@ -1,7 +1,10 @@
 <?php
 
-require_once __DIR__.'/../vendor/autoload.php';
-require_once __DIR__.'/DoxieScan.php';
+namespace jdenoc\DoxieConsumer;
+
+use Guzzle;
+use Monolog;
+use jdenoc\NetworkScanner\NetworkScanner;
 
 /**
  * DOXIE API Documentation
@@ -14,6 +17,7 @@ class DoxieConsumer {
     const URI_FILE_PREFIX = '/scans';
     const URI_THUMBNAIL_PREFIX = '/thumbnails';
     const URI_DELETE = '/scans/delete.json';
+    const DEFAULT_IP_IDENTIFIER = 'doxie';
 
     /**
      * @var Guzzle\Http\Client
@@ -24,6 +28,16 @@ class DoxieConsumer {
      * @var Monolog\Logger
      */
     private $logger;
+
+    /**
+     * @var NetworkScanner
+     */
+    private $network_scanner;
+
+    /**
+     * @var string
+     */
+    private $scanner_ip_address;
 
     /**
      * @param Guzzle\Http\Client $request_client
@@ -37,7 +51,21 @@ class DoxieConsumer {
      */
     public function set_logger($logger){
         $this->logger = $logger;
-        $this->logger->debug("Logger set");
+    }
+
+    /**
+     * @param NetworkScanner $network_scanner
+     */
+    public function set_network_scanner($network_scanner){
+        $this->network_scanner = $network_scanner;
+    }
+
+    /**
+     * @param string $ip_address
+     */
+    public function set_scanner_ip($ip_address){
+        $this->logger->debug("Scanner is located at: ".$ip_address);
+        $this->scanner_ip_address = $ip_address;
     }
 
     /**
@@ -45,13 +73,28 @@ class DoxieConsumer {
      */
     public function is_available(){
         $this->are_dependencies_set();
+
+        // check if doxie scanner can be found on the network
+        try{
+            $this->logger->debug("is scanner available on network");
+            $network_ip = $this->network_scanner->is_physical_address_on_network($this->get_doxie_physical_address());
+            if(!$network_ip){
+                return false;
+            }
+            $this->set_scanner_ip($network_ip);
+
+        } catch(\Exception $e){
+            $this->logger->warning("There was an error checking scanner availability\n".$e->getMessage());
+            return false;
+        }
+
         $request_url = $this->get_doxie_base_url().self::URI_STATUS;
         $this->logger->debug("Calling: GET ".$request_url);
 
         try{
             $response = $this->request_client->get($request_url)->send();
             return $response->isSuccessful();
-        } catch(Exception $e){
+        } catch(\Exception $e){
             $this->logger->warning("There was an error checking scanner availability\n".$e->getMessage());
             return false;
         }
@@ -60,8 +103,29 @@ class DoxieConsumer {
     /**
      * @return string
      */
+    public function get_doxie_physical_address(){
+        $physical_address = getenv("DOXIE_PHYSICAL_ADDRESS");
+        return $physical_address;
+    }
+
+    /**
+     * Alias for get_doxie_physical_address()
+     * @return string
+     */
+    public function get_doxie_mac_address(){
+        return $this->get_doxie_physical_address();
+    }
+
+    /**
+     * @return string
+     */
     public function get_doxie_base_url(){
-        $base_url = getenv("DOXIE_BASE_URL");
+        $base_url = 'http://';
+        if(empty($this->scanner_ip_address)){
+            $base_url .= self::DEFAULT_IP_IDENTIFIER;
+        } else {
+            $base_url .= $this->scanner_ip_address;
+        }
         return rtrim($base_url, '/');
     }
 
@@ -100,7 +164,7 @@ class DoxieConsumer {
             if(is_null($decoded_response)){
                 $decoded_response = array();
             }
-        } catch(Exception $e){
+        } catch(\Exception $e){
             $this->logger->error("Failed to list scans\n".$e->getMessage());
             $decoded_response = array();
         }
@@ -148,7 +212,7 @@ class DoxieConsumer {
         try{
             $response = $this->request_client->delete($request_url)->send();
             return $response->isSuccessful();
-        } catch(Exception $e){
+        } catch(\Exception $e){
             $this->logger->error("Failed to delete scan ".$doxie_scan."\n".$e->getMessage());
             return false;
         }
@@ -173,7 +237,7 @@ class DoxieConsumer {
         try{
             $response = $this->request_client->post($request_url, null, $to_delete)->send();
             return $response->isSuccessful();
-        } catch(Exception $e){
+        } catch(\Exception $e){
             $this->logger->error("failed to delete scans\n".$e->getMessage());
             return false;
         }
@@ -192,17 +256,23 @@ class DoxieConsumer {
 
     /**
      * throws an exception if any of the all dependencies are not set
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     private function are_dependencies_set(){
         if(!isset($this->logger)){
-            throw new InvalidArgumentException("logger not set. You must call set_logger or this service will not work");
+            throw new \InvalidArgumentException("logger not set. You must call set_logger or this service will not work");
         }
         if(!isset($this->request_client)){
             // if we get here, it is safe to assume that the logger has been set
             $error_msg = "request_client not set. You must call set_request_client or this service will not work";
             $this->logger->error($error_msg);
-            throw new InvalidArgumentException($error_msg);
+            throw new \InvalidArgumentException($error_msg);
+        }
+        if(!isset($this->network_scanner)){
+            // if we get here, it is safe to assume that the logger has been set
+            $error_msg = "network_scanner not set. You must call set_network_scanner or this service will not work";
+            $this->logger->error($error_msg);
+            throw new \InvalidArgumentException();
         }
     }
 
@@ -221,7 +291,7 @@ class DoxieConsumer {
                 ->setResponseBody($download_location)
                 ->send();
             return ($response->isSuccessful() && file_exists($download_location));
-        } catch(Exception $e){
+        } catch(\Exception $e){
             $this->logger->error("Failed to download from ".$request_url." to ".$download_location);
             return false;
         }
