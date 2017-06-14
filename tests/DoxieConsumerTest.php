@@ -56,7 +56,7 @@ class DoxieConsumerTest extends PhpUnitTestCase {
     public function setup_network_scanner(){
         $this->_network_scanner = new NetworkScanner\Tests\NetworkScanner();
         $this->_network_scanner->set_detectable_os(NetworkScanner\NetworkScanner::OS_LINUX);
-        $this->_network_scanner->add_mac_address_to_response('127.0.0.1', getenv("DOXIE_PHYSICAL_ADDRESS"));
+        $this->_network_scanner->add_mac_address_to_response('127.0.0.1', getenv(DoxieConsumer::ENV_KEY_PHYSICAL_ADDRESS));
     }
 
     /**
