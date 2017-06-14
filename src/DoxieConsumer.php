@@ -4,6 +4,7 @@ namespace jdenoc\DoxieConsumer;
 
 use Guzzle;
 use Monolog;
+use Dotenv;
 use jdenoc\NetworkScanner\NetworkScanner;
 
 /**
@@ -12,6 +13,8 @@ use jdenoc\NetworkScanner\NetworkScanner;
  */
 class DoxieConsumer {
 
+    const ENV_KEY_PHYSICAL_ADDRESS = 'DOXIE_PHYSICAL_ADDRESS';
+    const ENV_KEY_DOWNLOAD_LOCATION = 'DOWNLOAD_LOCATION';
     const URI_STATUS = '/hello.json';
     const URI_LIST = '/scans.json';
     const URI_FILE_PREFIX = '/scans';
@@ -38,6 +41,11 @@ class DoxieConsumer {
      * @var string
      */
     private $scanner_ip_address;
+
+    public function __construct(){
+        Dotenv::required(self::ENV_KEY_PHYSICAL_ADDRESS);
+        Dotenv::required(self::ENV_KEY_DOWNLOAD_LOCATION);
+    }
 
     /**
      * @param Guzzle\Http\Client $request_client
@@ -104,7 +112,7 @@ class DoxieConsumer {
      * @return string
      */
     public function get_doxie_physical_address(){
-        $physical_address = getenv("DOXIE_PHYSICAL_ADDRESS");
+        $physical_address = getenv(self::ENV_KEY_PHYSICAL_ADDRESS);
         return $physical_address;
     }
 
@@ -133,7 +141,7 @@ class DoxieConsumer {
      * @return string
      */
     public function get_download_location(){
-        $location = getenv("DOWNLOAD_LOCATION");
+        $location = getenv(self::ENV_KEY_DOWNLOAD_LOCATION);
         return rtrim($location, '/');
     }
 

@@ -7,7 +7,7 @@
   }],
   "require": {
     "guzzle/guzzle": "^3.9",
-    "vlucas/phpdotenv": "1.0.6",
+    "vlucas/phpdotenv": "^1.1",
     "phine/phar": "~1.0",
     "monolog/monolog": "^1.22",
     "nategood/commando": "^0.2.9",
