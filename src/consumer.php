@@ -10,6 +10,8 @@ $cli->option('v')
     ->aka('verbose')
     ->describedAs("describe what is happening, as it happens")
     ->boolean();
+$cli->option('ip')
+    ->describedAs("set IP address so we don't have to search the local network for the scanner");
 
 // load environment variables
 Dotenv::load(__DIR__.DIRECTORY_SEPARATOR.'..');
@@ -47,8 +49,12 @@ $doxie_consumer->set_request_client($request_client);
 $doxie_consumer->set_logger($logger);
 $doxie_consumer->set_network_scanner($network_scanner);
 
+if(!empty($cli_flags['ip'])){
+    $doxie_consumer->set_scanner_ip($cli_flags['ip']);
+}
+
 if(!$doxie_consumer->is_available()){
-    $exit_msg = "scanner is not currently available";
+    $exit_msg = "Scanner is not currently available";
     if($verbose_flag){
         $logger->debug($exit_msg);
         exit;

@@ -77,23 +77,43 @@ class DoxieConsumer {
     }
 
     /**
+     * @return string
+     */
+    public function get_scanner_ip(){
+        return $this->scanner_ip_address;
+    }
+
+    public function unset_scanner_ip(){
+        $this->scanner_ip_address = null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function is_scanner_ip_set(){
+        return !empty($this->scanner_ip_address);
+    }
+
+    /**
      * @return bool
      */
     public function is_available(){
         $this->are_dependencies_set();
 
-        // check if doxie scanner can be found on the network
-        try{
-            $this->logger->debug("is scanner available on network");
-            $network_ip = $this->network_scanner->is_physical_address_on_network($this->get_doxie_physical_address());
-            if(!$network_ip){
+        if(!$this->is_scanner_ip_set()){
+            // check if doxie scanner can be found on the network
+            try{
+                $this->logger->debug("Is scanner available on network?");
+                $network_ip = $this->network_scanner->is_physical_address_on_network($this->get_doxie_physical_address());
+                if(!$network_ip){
+                    return false;
+                }
+                $this->set_scanner_ip($network_ip);
+
+            } catch(\Exception $e){
+                $this->logger->warning("There was an error checking scanner availability\n".$e->getMessage());
                 return false;
             }
-            $this->set_scanner_ip($network_ip);
-
-        } catch(\Exception $e){
-            $this->logger->warning("There was an error checking scanner availability\n".$e->getMessage());
-            return false;
         }
 
         $request_url = $this->get_doxie_base_url().self::URI_STATUS;
@@ -104,6 +124,9 @@ class DoxieConsumer {
             return $response->isSuccessful();
         } catch(\Exception $e){
             $this->logger->warning("There was an error checking scanner availability\n".$e->getMessage());
+            // There was an error confirming IP address was available/accessible.
+            // Lets unset it, so we can scan the local network.
+            $this->unset_scanner_ip();
             return false;
         }
     }
@@ -129,10 +152,10 @@ class DoxieConsumer {
      */
     public function get_doxie_base_url(){
         $base_url = 'http://';
-        if(empty($this->scanner_ip_address)){
-            $base_url .= self::DEFAULT_IP_IDENTIFIER;
+        if($this->is_scanner_ip_set()){
+            $base_url .= $this->get_scanner_ip();
         } else {
-            $base_url .= $this->scanner_ip_address;
+            $base_url .= self::DEFAULT_IP_IDENTIFIER;
         }
         return rtrim($base_url, '/');
     }
@@ -246,7 +269,7 @@ class DoxieConsumer {
             $response = $this->request_client->post($request_url, null, $to_delete)->send();
             return $response->isSuccessful();
         } catch(\Exception $e){
-            $this->logger->error("failed to delete scans\n".$e->getMessage());
+            $this->logger->error("Failed to delete scans\n".$e->getMessage());
             return false;
         }
     }
