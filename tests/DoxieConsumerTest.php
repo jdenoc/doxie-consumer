@@ -654,4 +654,21 @@ class DoxieConsumerTest extends PhpUnitTestCase {
         return $logger_records_string;
     }
 
+    /**
+     * test setting/unsetting scanner ip
+     * @test
+     */
+    public function setting_scanner_ip(){
+        $ip_address = '127.0.0.1';
+        $doxie = new DoxieConsumer();
+        $doxie->set_logger($this->_logger);
+
+        $this->assertFalse($doxie->is_scanner_ip_set());
+        $doxie->set_scanner_ip($ip_address);
+        $this->assertTrue($doxie->is_scanner_ip_set());
+        $this->assertEquals($ip_address, $doxie->get_scanner_ip());
+        $doxie->unset_scanner_ip();
+        $this->assertFalse($doxie->is_scanner_ip_set());
+    }
+
 }

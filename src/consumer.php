@@ -3,19 +3,27 @@
 require_once __DIR__.'/../vendor/autoload.php';
 require_once __DIR__.'/DoxieConsumer.php';
 
+define("LOGGER_NAME", "doxie-consumer");
+define("OPTION_VERBOSE", "v");
+define("OPTION_IP", "ip");
+define("TIMEOUT_CONNECTION", 3);  // 3 second connection timeout
+define("TIMEOUT", 300);           // 5 minute request timeout
+
 // Setup command line options parser
 $cli = new Commando\Command();
 $cli->setHelp("Doxie Consumer\nConnects to a Doxie scanner and grab scans");
-$cli->option('v')
+$cli->option(OPTION_VERBOSE)
     ->aka('verbose')
-    ->describedAs("describe what is happening, as it happens")
+    ->describedAs("Describe what is happening, as it happens")
     ->boolean();
+$cli->option(OPTION_IP)
+    ->describedAs("Set IP address so we don't have to search the local network for the scanner");
 
 // load environment variables
 Dotenv::load(__DIR__.DIRECTORY_SEPARATOR.'..');
 
 // Setup a logger
-$logger = new Monolog\Logger("doxie-consumer");
+$logger = new Monolog\Logger(LOGGER_NAME);
 $logger_error_handler = new Monolog\Handler\ErrorLogHandler();
 $log_formatter = new Monolog\Formatter\LineFormatter(null, 'c');    // 'c' is the date format
 $log_formatter->ignoreEmptyContextAndExtra();
@@ -24,7 +32,7 @@ $logger_fingers_crossed_handler = new Monolog\Handler\FingersCrossedHandler($log
 $logger->pushHandler($logger_fingers_crossed_handler);
 
 $cli_flags = $cli->getFlagValues();
-$verbose_flag = (isset($cli_flags['v']) && $cli_flags['v'] === true);
+$verbose_flag = (isset($cli_flags[OPTION_VERBOSE]) && $cli_flags[OPTION_VERBOSE] === true);
 if($verbose_flag){
     // When the -v|--verbose flag is provided, add a handler that outputs to the terminal
     // Grabbed from http://stackoverflow.com/a/25787259
@@ -35,8 +43,8 @@ if($verbose_flag){
 
 // Setup a request client
 $request_client = new Guzzle\Http\Client();
-$request_client->setDefaultOption('timeout', 300);          // 5 minute request timeout
-$request_client->setDefaultOption('connect_timeout', 3);    // 3 second connection timeout
+$request_client->setDefaultOption('connect_timeout', TIMEOUT_CONNECTION);
+$request_client->setDefaultOption('timeout', TIMEOUT);
 
 // setup network scanner
 $network_scanner = new jdenoc\NetworkScanner\NetworkScanner();
@@ -47,8 +55,12 @@ $doxie_consumer->set_request_client($request_client);
 $doxie_consumer->set_logger($logger);
 $doxie_consumer->set_network_scanner($network_scanner);
 
+if(!empty($cli_flags[OPTION_IP])){
+    $doxie_consumer->set_scanner_ip($cli_flags[OPTION_IP]);
+}
+
 if(!$doxie_consumer->is_available()){
-    $exit_msg = "scanner is not currently available";
+    $exit_msg = "Scanner is not currently available";
     if($verbose_flag){
         $logger->debug($exit_msg);
         exit;
@@ -83,7 +95,7 @@ foreach($doxie_scans as $doxie_scan){
     } else {
         if(!$doxie_consumer->is_available()){
             // scanner is no longer available, break out of loop and stop consuming scans
-            $logger->warning("Scanner is no longer available. Consumer stopping");
+            $logger->warning("Scanner is no longer available. Consumer stopping.");
             break;
         }
     }
