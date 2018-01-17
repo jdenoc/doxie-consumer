@@ -24,7 +24,7 @@ $cli->option(OPTION_IP)
 Dotenv::load(__DIR__.DIRECTORY_SEPARATOR.'..');
 
 // Setup a logger
-$logger = new Monolog\Logger(LOGGER_NAME);
+$logger = new Monolog\Logger(LOGGER_NAME.getmypid());
 $logger_error_handler = new Monolog\Handler\ErrorLogHandler();
 $log_formatter = new Monolog\Formatter\LineFormatter(null, 'c');    // 'c' is the date format
 $log_formatter->ignoreEmptyContextAndExtra();
