@@ -12,7 +12,8 @@
     "monolog/monolog": "^1.22",
     "nategood/commando": "^0.2.9",
     "symfony/finder": "^3.2",
-    "jdenoc/network-scanner": "0.0.2"
+    "jdenoc/network-scanner": "0.0.2",
+    "symfony/lock": "v3.4.1"
   },
   "require-dev": {
     "phpunit/phpunit": "^4.8"
