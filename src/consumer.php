@@ -4,7 +4,8 @@ require_once __DIR__.'/../vendor/autoload.php';
 require_once __DIR__.'/DoxieConsumer.php';
 
 define("LOGGER_NAME", "doxie-consumer");
-define("OPTION_VERBOSE", "v");
+define("LOCK_NAME", "doxie-consumer");
+define("OPTION_VERBOSE", "vvv");
 define("OPTION_IP", "ip");
 define("TIMEOUT_CONNECTION", 3);  // 3 second connection timeout
 define("TIMEOUT", 300);           // 5 minute request timeout
@@ -34,12 +35,19 @@ $logger->pushHandler($logger_fingers_crossed_handler);
 $cli_flags = $cli->getFlagValues();
 $verbose_flag = (isset($cli_flags[OPTION_VERBOSE]) && $cli_flags[OPTION_VERBOSE] === true);
 if($verbose_flag){
-    // When the -v|--verbose flag is provided, add a handler that outputs to the terminal
+    // When the -vvv|--verbose flag is provided, add a handler that outputs to the terminal
     // Grabbed from http://stackoverflow.com/a/25787259
     $verbose_output_handler = new Monolog\Handler\StreamHandler('php://stdout');
     $verbose_output_handler->setFormatter($log_formatter);
     $logger->pushHandler($verbose_output_handler);
 }
+
+// setup lock file
+$lock_file_store = new Symfony\Component\Lock\Store\FlockStore();
+$lock_file_factory = new Symfony\Component\Lock\Factory($lock_file_store);
+//// lock file will NOT have an expiration
+//// lock file will NOT be automatically "released" for further use upon script termination
+$lock = $lock_file_factory->createLock(LOCK_NAME, null, false);
 
 // Setup a request client
 $request_client = new Guzzle\Http\Client();
@@ -59,14 +67,14 @@ if(!empty($cli_flags[OPTION_IP])){
     $doxie_consumer->set_scanner_ip($cli_flags[OPTION_IP]);
 }
 
+// create lock file
+if(!$lock->acquire()){
+    premature_exit("Consumer is already running in another process. Terminating in favour of currently running service.", $verbose_flag, $logger, $logger::NOTICE);
+}
+
 if(!$doxie_consumer->is_available()){
-    $exit_msg = "Scanner is not currently available";
-    if($verbose_flag){
-        $logger->debug($exit_msg);
-        exit;
-    } else {
-        die('['.date('c').'] '.$exit_msg."\n");
-    }
+    $lock->release();
+    premature_exit("Scanner is not currently available", $verbose_flag, $logger, $logger::DEBUG);
 }
 
 $obtained_scans = array();
@@ -95,8 +103,24 @@ foreach($doxie_scans as $doxie_scan){
     } else {
         if(!$doxie_consumer->is_available()){
             // scanner is no longer available, break out of loop and stop consuming scans
-            $logger->warning("Scanner is no longer available. Consumer stopping.");
+            $logger->warning("Scanner is no longer available. Consumer terminating.");
             break;
         }
+    }
+}
+$lock->release();
+
+/**
+ * @param string $exit_message
+ * @param boolean $verbose_flag
+ * @param Monolog\Logger $logger
+ * @param int $log_level
+ */
+function premature_exit($exit_message, $verbose_flag, $logger, $log_level){
+    if($verbose_flag){
+        $logger->addRecord($log_level, $exit_message);
+        exit;
+    } else {
+        die('['.date('c').'] '.$exit_message."\n");
     }
 }
