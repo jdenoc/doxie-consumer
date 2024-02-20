@@ -2,13 +2,11 @@
 
 require_once __DIR__.'/../vendor/autoload.php';
 
-use eiriksm\GitInfo\GitInfo;
 use Jdenoc\DoxieConsumer\Commands\Consumer;
 use Jdenoc\DoxieConsumer\ConsoleOutput;
 use Symfony\Component\Console\Application;
 
-$info = new GitInfo();
-$app_version = $info->getVersion();
+$app_version = getenv("APP_VERSION", true) ?: 'dev';
 $application = new Application('doxie-consumer', $app_version);
 
 $command = new Consumer();

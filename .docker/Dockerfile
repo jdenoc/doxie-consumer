@@ -63,6 +63,9 @@ ENV DOWNLOAD_DIR=/opt/doxie/scans
 RUN mkdir --parents $DOWNLOAD_DIR \
     && chown --recursive $USER $DOWNLOAD_DIR
 
+ARG APP_VERSION=dev
+ENV APP_VERSION=$APP_VERSION
+
 ENV SCANNER_HOST=doxie.scanner
 
 CMD ["php", "/opt/doxie/consumer.phar", "-vvv", "--", "$SCANNER_HOST", "$DOWNLOAD_DIR", ">>", "$LOGS_DIR/$(date '+%Y%m%d').log"]
