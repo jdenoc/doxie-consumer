@@ -1,0 +1,13 @@
+{
+  "main": "src/consumer.php",
+  "output": "consumer.phar",
+  "chmod": "0744",
+  "blacklist": [
+    "tests"
+  ],
+  "directories": [
+    "src",
+    "vendor"
+  ],
+  "dump-autoload": false
+}

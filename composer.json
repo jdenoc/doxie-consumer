@@ -1,35 +1,50 @@
 {
-  "name": "jdenoc/doxie-consumer",
-  "type": "project",
-  "authors": [{
-    "name":"jdenoc",
-    "email":"jdenoc@gmail.com"
-  }],
-  "require": {
-    "guzzle/guzzle": "^3.9",
-    "vlucas/phpdotenv": "^1.1",
-    "phine/phar": "~1.0",
-    "monolog/monolog": "^1.22",
-    "nategood/commando": "^0.2.9",
-    "symfony/finder": "^3.2",
-    "jdenoc/network-scanner": "0.0.2",
-    "symfony/lock": "v3.4.1"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "^4.8"
-  },
-  "autoload": {
-    "psr-4": {
-      "jdenoc\\DoxieConsumer\\": "src"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "jdenoc\\DoxieConsumer\\Tests\\": "tests"
-    }
-  },
-  "repositories": [{
-    "type": "vcs",
-    "url": "https://github.com/jdenoc/network-scanner"
-  }]
+    "name": "jdenoc/doxie-consumer",
+    "type": "project",
+    "description": "PHP consumer process to connect to and retrieve scans from Doxie Scanners",
+    "authors": [{
+        "name":"jdenoc",
+        "email":"jdenoc@gmail.com"
+    }],
+    "support": {
+        "issues": "https://github.com/jdenoc/doxie-consumer/issues",
+        "source": "https://github.com/jdenoc/doxie-consumer"
+    },
+    "license": "MIT",
+    "keywords": ["doxie", "doxieq", "scanner"],
+    "require": {
+        "symfony/console": "^6",
+        "guzzlehttp/guzzle": "^7",
+        "vlucas/phpdotenv": "^5",
+        "monolog/monolog": "^3.5",
+        "symfony/finder": "^6",
+        "symfony/lock": "^6",
+        "symfony/http-client": "^6.3",
+        "symfony/http-foundation": "^6.3",
+        "humbug/box": "^4.3"
+    },
+    "require-dev": {
+        "pestphp/pest": "^2.25",
+        "friendsofphp/php-cs-fixer": "^3.49"
+    },
+    "autoload": {
+        "psr-4": {
+            "Jdenoc\\DoxieConsumer\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Jdenoc\\DoxieConsumer\\Tests\\": "tests"
+        }
+    },
+    "config": {
+        "allow-plugins": false,
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "platform": {
+            "php": "8.3"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
 }

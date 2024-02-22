@@ -1,0 +1,38 @@
+# .github/workflows/release.yml
+name: doxie-consumer | release
+
+on:
+  push:
+  # Triggers the workflow when a tag is pushed
+    tags:
+      - '*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - id: set-release-name
+        run: echo "RELEASE_NAME=$(git describe --tags)" >> $GITHUB_ENV
+
+      - id: set-alt-release-name
+        run: echo "ALT_RELEASE_NAME={{ env.RELEASE_NAME }}.{{ github.sha }}" >> $GITHUB_ENV
+
+      - id: build-release-image
+        run: |
+          docker image build . \
+            --file .docker/Dockerfile \
+            --build-arg="APP_VERSION={{ env.RELEASE_NAME }}" \
+            --tag ghcr.io/{{ github.repository }}:latest \
+            --tag ghcr.io/{{ github.repository }}:{{ env.RELEASE_NAME }} \
+            --tag ghcr.io/{{ github.repository }}:{{ env.ALT_RELEASE_NAME }}
+
+      - id: upload-release-image
+        run: |
+          docker push ghcr.io/{{ github.repository }}:latest
+          docker push ghcr.io/{{ github.repository }}:{{ env.RELEASE_NAME }}
+          docker push ghcr.io/{{ github.repository }}:{{ env.ALT_RELEASE_NAME }}

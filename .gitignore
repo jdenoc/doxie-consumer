@@ -1,8 +1,9 @@
 .idea
 .DS_Store
+.vscode
 
-composer.lock
+.phpunit.result.cache
 vendor
+auth.json
 
-.env
 *.phar

@@ -1,0 +1,14 @@
+.git*
+!.git
+.docker
+.idea
+.DS_Store
+
+.php-version
+.editorconfig
+
+docs
+README.md
+
+vendor
+
