@@ -20,20 +20,20 @@ jobs:
         run: echo "RELEASE_NAME=$(git describe --tags)" >> $GITHUB_ENV
 
       - id: set-alt-release-name
-        run: echo "ALT_RELEASE_NAME={{ env.RELEASE_NAME }}.{{ github.sha }}" >> $GITHUB_ENV
+        run: echo "ALT_RELEASE_NAME=${{ env.RELEASE_NAME }}.${{ github.sha }}" >> $GITHUB_ENV
 
       - id: build-release-image
         run: |
           docker image build \
             --file .docker/Dockerfile \
-            --build-arg="APP_VERSION={{ env.RELEASE_NAME }}" \
-            --tag ghcr.io/{{ github.repository }}:latest \
-            --tag ghcr.io/{{ github.repository }}:{{ env.RELEASE_NAME }} \
-            --tag ghcr.io/{{ github.repository }}:{{ env.ALT_RELEASE_NAME }} \
+            --build-arg "APP_VERSION=${{ env.RELEASE_NAME }}" \
+            --tag ghcr.io/${{ github.repository }}:latest \
+            --tag ghcr.io/${{ github.repository }}:${{ env.RELEASE_NAME }} \
+            --tag ghcr.io/${{ github.repository }}:${{ env.ALT_RELEASE_NAME }} \
             .
 
       - id: upload-release-image
         run: |
-          docker push ghcr.io/{{ github.repository }}:latest
-          docker push ghcr.io/{{ github.repository }}:{{ env.RELEASE_NAME }}
-          docker push ghcr.io/{{ github.repository }}:{{ env.ALT_RELEASE_NAME }}
+          docker push ghcr.io/${{ github.repository }}:latest
+          docker push ghcr.io/${{ github.repository }}:${{ env.RELEASE_NAME }}
+          docker push ghcr.io/${{ github.repository }}:${{ env.ALT_RELEASE_NAME }}
