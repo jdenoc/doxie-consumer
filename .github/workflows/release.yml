@@ -24,12 +24,13 @@ jobs:
 
       - id: build-release-image
         run: |
-          docker image build . \
+          docker image build \
             --file .docker/Dockerfile \
             --build-arg="APP_VERSION={{ env.RELEASE_NAME }}" \
             --tag ghcr.io/{{ github.repository }}:latest \
             --tag ghcr.io/{{ github.repository }}:{{ env.RELEASE_NAME }} \
-            --tag ghcr.io/{{ github.repository }}:{{ env.ALT_RELEASE_NAME }}
+            --tag ghcr.io/{{ github.repository }}:{{ env.ALT_RELEASE_NAME }} \
+            .
 
       - id: upload-release-image
         run: |
