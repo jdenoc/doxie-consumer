@@ -34,6 +34,9 @@ jobs:
             --tag ghcr.io/${{ github.repository }}:${{ env.ALT_RELEASE_NAME }} \
             .
 
+      - id: auth-github-container-registry
+        run: echo ${{ github.token }} | docker login ghcr.io -u USERNAME --password-stdin
+
       - id: upload-release-image
         run: |
           docker push ghcr.io/${{ github.repository }}:latest
