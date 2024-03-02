@@ -20,7 +20,9 @@ jobs:
         run: echo "RELEASE_NAME=$(git describe --tags)" >> $GITHUB_ENV
 
       - id: set-alt-release-name
-        run: echo "ALT_RELEASE_NAME=${{ env.RELEASE_NAME }}.${{ github.sha }}" >> $GITHUB_ENV
+        run: |
+          COMMIT_SHA_SHORT=$(git rev-parse --short ${{ github.sha }})
+          echo "ALT_RELEASE_NAME=${{ env.RELEASE_NAME }}-$COMMIT_SHA_SHORT" >> $GITHUB_ENV
 
       - id: build-release-image
         run: |
@@ -31,6 +33,9 @@ jobs:
             --tag ghcr.io/${{ github.repository }}:${{ env.RELEASE_NAME }} \
             --tag ghcr.io/${{ github.repository }}:${{ env.ALT_RELEASE_NAME }} \
             .
+
+      - id: auth-github-container-registry
+        run: echo ${{ github.token }} | docker login ghcr.io -u USERNAME --password-stdin
 
       - id: upload-release-image
         run: |
