@@ -17,6 +17,13 @@ RUN --mount=type=bind,source=./composer.json,target=composer.json \
     composer install --no-interaction
 
 FROM php:8.3-cli as base
+
+LABEL org.opencontainers.image.authors="jdenoc"
+LABEL org.opencontainers.image.description="Consumer for Scans made by a Doxie Q scanner"
+LABEL org.opencontainers.image.licenses="MIT"
+LABEL org.opencontainers.image.source="https://github.com/jdenoc/doxie-consumer"
+LABEL org.opencontainers.image.title="doxie-consumer"
+
 RUN apt update \
     && apt install -y curl
 
@@ -49,6 +56,8 @@ RUN vendor/bin/box validate \
 
 FROM base as final
 
+ENV SCANNER_HOST=doxie.scanner
+
 ENV LOGS_DIR=/var/log/doxie-consumer
 RUN mkdir --parents $LOGS_DIR \
     && chown --recursive $USER $LOGS_DIR
@@ -65,7 +74,9 @@ RUN mkdir --parents $DOWNLOAD_DIR \
 
 ARG APP_VERSION=dev
 ENV APP_VERSION=$APP_VERSION
+LABEL org.opencontainers.image.version="$APP_VERSION"
 
-ENV SCANNER_HOST=doxie.scanner
+ARG BUILD_DATETIME
+LABEL org.opencontainers.image.created="$BUILD_DATETIME"
 
 CMD ["php", "/opt/doxie/consumer.phar", "-vvv", "--", "$SCANNER_HOST", "$DOWNLOAD_DIR", ">>", "$LOGS_DIR/$(date '+%Y%m%d').log"]

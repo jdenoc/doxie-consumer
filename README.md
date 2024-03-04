@@ -34,7 +34,10 @@ docker run --rm \
 
 ### Build image locally
 ```sh
-docker image build --file .docker/Dockerfile --tag doxie-consumer .
+docker image build \
+  --file .docker/Dockerfile \
+  --build-arg "BUILD_DATETIME=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
+  --tag doxie-consumer .
 ```
 
 ---
