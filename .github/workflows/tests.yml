@@ -44,7 +44,7 @@ jobs:
           docker image build \
             --file .docker/Dockerfile \
             --build-arg "BUILD_DATETIME=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
-            --tag doxie-consumer:full-build-image-test
+            --tag doxie-consumer:full-build-image-test \
             .
 
   notification:
