@@ -35,10 +35,23 @@ jobs:
         id: run-tests
         run: docker container run --rm doxie-consumer:testing
 
+  full-image-build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - id: build-release-image
+        run: |
+          docker image build \
+            --file .docker/Dockerfile \
+            --build-arg "BUILD_DATETIME=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
+            --tag doxie-consumer:full-build-image-test
+            .
+
   notification:
     runs-on: ubuntu-latest
     needs:  # make sure the notification is sent AFTER the jobs you want included have completed
       - testing
+      - full-image-build-test
     if: ${{ always() }} # You always want to be notified: success, failure, or cancelled
     timeout-minutes: 15
     steps:
