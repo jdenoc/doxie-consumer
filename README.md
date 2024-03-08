@@ -24,12 +24,11 @@ docker image pull ghcr.io/jdenoc/doxie-consumer
 ```
 
 ### Run container
-```shell
+```sh
 docker run --rm \
   --env SCANNER_HOST=doxie.scanner \
   --volume /host/machine/path/to/scans:/opt/doxie/scans \
-  --volume /host/machine/path/to/logs:/var/log/doxie-consumer \
-  docker-consumer
+  doxie-consumer
 ```
 
 ### Build image locally
@@ -69,8 +68,7 @@ vendor/bin/box validate && \
 ```sh
 export SCANNER_HOST=doxie.scanner
 export DOWNLOAD_DIR=/path/to/downloads
-export LOGS_DIR=/path/to/logs
-php consumer.phar -vvv -- $SCANNER_HOST $DOWNLOAD_DIR >> $LOGS_DIR/$(date '+%Y%m%d').log
+php consumer.phar -vvv -- $SCANNER_HOST $DOWNLOAD_DIR
 ```
 
 ---
