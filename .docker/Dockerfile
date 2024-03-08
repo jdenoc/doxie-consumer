@@ -75,4 +75,5 @@ LABEL org.opencontainers.image.version="$APP_VERSION"
 ARG BUILD_DATETIME
 LABEL org.opencontainers.image.created="$BUILD_DATETIME"
 
-CMD ["php", "/opt/doxie/consumer.phar", "-vvv", "--", "$SCANNER_HOST", "$DOWNLOAD_DIR"]
+ENTRYPOINT ["/opt/doxie/consumer.phar"]
+CMD ["-vvv", "--", "$SCANNER_HOST", "$DOWNLOAD_DIR"]
