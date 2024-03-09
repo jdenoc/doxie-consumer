@@ -81,7 +81,7 @@ class DoxieScannerClient {
      */
     public function getScan(DoxieScan $scan, string $downloadDirectory): bool {
         $download_file = rtrim($downloadDirectory, '/').'/'.$this->generateDownloadFilename($scan);
-        $request_url = self::URI_SCAN_PREFIX.'/'.$scan->name;
+        $request_url = self::URI_SCAN_PREFIX.'/'.ltrim($scan->name, '/');
         return $this->downloadFile($request_url, $download_file);
     }
 
@@ -90,7 +90,7 @@ class DoxieScannerClient {
      */
     public function getThumbnail(DoxieScan $scan): bool {
         $download_file = rtrim(sys_get_temp_dir(), '/').'/thumbnail.'.basename($scan->name);
-        $request_url = self::URI_THUMBNAIL_PREFIX.'/'.$scan->name;
+        $request_url = self::URI_THUMBNAIL_PREFIX.'/'.ltrim($scan->name, '/');
         return $this->downloadFile($request_url, $download_file);
     }
 
@@ -116,7 +116,7 @@ class DoxieScannerClient {
      * DELETE /scans/$filename
      */
     public function deleteScan(DoxieScan $scan): bool {
-        $request_url = self::URI_SCAN_PREFIX.'/'.$scan->name;
+        $request_url = self::URI_SCAN_PREFIX.'/'.ltrim($scan->name, '/');
         try {
             $this->output('debug', "Calling:DELETE $request_url");
             $response = $this->httpClient->request('DELETE', $request_url);
@@ -133,7 +133,7 @@ class DoxieScannerClient {
     public function deleteScans(array $scans = []): bool {
         $scans_to_delete = [];
         foreach ($scans as $scan) {
-            $scans_to_delete[] = '/'.$scan->name;
+            $scans_to_delete[] = '/'.ltrim($scan->name, '/');
         }
 
         $this->output('debug', "Calling:POST ".self::URI_DELETE."; DATA:".json_encode($scans_to_delete));
