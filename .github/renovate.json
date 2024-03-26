@@ -1,0 +1,15 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "dependencyDashboardTitle": "Renovate Dependency Dashboard",
+  "enabledManagers": ["composer"],
+  "prHourlyLimit": 1,
+  "minimumReleaseAge": "30 days",
+  "rangeStrategy": "update-lockfile",
+  "separateMajorMinor": true,
+  "separateMinorPatch": true,
+  "separateMultipleMajor": true,
+  "separateMultipleMinor": true
+}
