@@ -46,7 +46,7 @@ class Consumer extends Command {
         $scanner = new DoxieScannerClient($http_client, $output);
 
         if(!$scanner->isAvailable()) {
-            $output->info("scanner not currently available");
+            $output->info("scanner [$scanner_host] not currently available");
             $this->release();
             return Command::SUCCESS;
         }
@@ -70,7 +70,7 @@ class Consumer extends Command {
             } else {
                 if (!$scanner->isAvailable()) {
                     // scanner is no longer available, break out of loop and stop consuming scans
-                    $output->warning("Scanner is no longer available. Terminating consumer process.");
+                    $output->warning("Scanner [$scanner_host] is no longer available. Terminating consumer process.");
                     break;
                 }
             }

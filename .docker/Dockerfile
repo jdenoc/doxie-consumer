@@ -58,10 +58,6 @@ FROM base as final
 
 ENV SCANNER_HOST=doxie.scanner
 
-ENV LOGS_DIR=/var/log/doxie-consumer
-RUN mkdir --parents $LOGS_DIR \
-    && chown --recursive $USER $LOGS_DIR
-
 WORKDIR /opt/doxie
 COPY --from=compile-phar /opt/doxie-consumer/consumer.phar /opt/doxie/consumer.phar
 RUN chown --recursive $USER /opt/doxie; \
@@ -79,4 +75,4 @@ LABEL org.opencontainers.image.version="$APP_VERSION"
 ARG BUILD_DATETIME
 LABEL org.opencontainers.image.created="$BUILD_DATETIME"
 
-CMD ["php", "/opt/doxie/consumer.phar", "-vvv", "--", "$SCANNER_HOST", "$DOWNLOAD_DIR", ">>", "$LOGS_DIR/$(date '+%Y%m%d').log"]
+CMD php consumer.phar -vvv -- $SCANNER_HOST $DOWNLOAD_DIR
