@@ -4081,8 +4081,8 @@
             "type": "library",
             "extra": {
                 "thanks": {
-                    "name": "symfony/polyfill",
-                    "url": "https://github.com/symfony/polyfill"
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
                 }
             },
             "autoload": {
@@ -5748,16 +5748,16 @@
         },
         {
             "name": "pestphp/pest",
-            "version": "v2.30.0",
+            "version": "v2.31.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pestphp/pest.git",
-                "reference": "97dc32f9d24b84dd071d9e89438a19e43c833f6f"
+                "reference": "3457841a9b124653edcfef1d5da24e6afe176f79"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pestphp/pest/zipball/97dc32f9d24b84dd071d9e89438a19e43c833f6f",
-                "reference": "97dc32f9d24b84dd071d9e89438a19e43c833f6f",
+                "url": "https://api.github.com/repos/pestphp/pest/zipball/3457841a9b124653edcfef1d5da24e6afe176f79",
+                "reference": "3457841a9b124653edcfef1d5da24e6afe176f79",
                 "shasum": ""
             },
             "require": {
@@ -5765,7 +5765,7 @@
                 "nunomaduro/collision": "^7.10.0|^8.0.1",
                 "nunomaduro/termwind": "^1.15.1|^2.0.0",
                 "pestphp/pest-plugin": "^2.1.1",
-                "pestphp/pest-plugin-arch": "^2.5.0",
+                "pestphp/pest-plugin-arch": "^2.6.1",
                 "php": "^8.1.0",
                 "phpunit/phpunit": "^10.5.5"
             },
@@ -5776,8 +5776,8 @@
             },
             "require-dev": {
                 "pestphp/pest-dev-tools": "^2.16.0",
-                "pestphp/pest-plugin-type-coverage": "^2.6.0",
-                "symfony/process": "^6.4.0|^7.0.0"
+                "pestphp/pest-plugin-type-coverage": "^2.8.0",
+                "symfony/process": "^6.4.0|^7.0.2"
             },
             "bin": [
                 "bin/pest"
@@ -5840,7 +5840,7 @@
             ],
             "support": {
                 "issues": "https://github.com/pestphp/pest/issues",
-                "source": "https://github.com/pestphp/pest/tree/v2.30.0"
+                "source": "https://github.com/pestphp/pest/tree/v2.31.0"
             },
             "funding": [
                 {
@@ -5852,7 +5852,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-12-28T10:36:40+00:00"
+            "time": "2024-01-11T15:33:20+00:00"
         },
         {
             "name": "pestphp/pest-plugin",
@@ -5926,26 +5926,26 @@
         },
         {
             "name": "pestphp/pest-plugin-arch",
-            "version": "v2.6.0",
+            "version": "v2.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pestphp/pest-plugin-arch.git",
-                "reference": "0741696072b5db5989d63013a7b3e83358f4dfcf"
+                "reference": "d23b2d7498475354522c3818c42ef355dca3fcda"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pestphp/pest-plugin-arch/zipball/0741696072b5db5989d63013a7b3e83358f4dfcf",
-                "reference": "0741696072b5db5989d63013a7b3e83358f4dfcf",
+                "url": "https://api.github.com/repos/pestphp/pest-plugin-arch/zipball/d23b2d7498475354522c3818c42ef355dca3fcda",
+                "reference": "d23b2d7498475354522c3818c42ef355dca3fcda",
                 "shasum": ""
             },
             "require": {
-                "nunomaduro/collision": "^7.10.0|^8.0.1",
+                "nunomaduro/collision": "^7.10.0|^8.1.0",
                 "pestphp/pest-plugin": "^2.1.1",
                 "php": "^8.1",
-                "ta-tikoma/phpunit-architecture-test": "^0.8.0"
+                "ta-tikoma/phpunit-architecture-test": "^0.8.4"
             },
             "require-dev": {
-                "pestphp/pest": "^2.30.0",
+                "pestphp/pest": "^2.33.0",
                 "pestphp/pest-dev-tools": "^2.16.0"
             },
             "type": "library",
@@ -5981,7 +5981,7 @@
                 "unit"
             ],
             "support": {
-                "source": "https://github.com/pestphp/pest-plugin-arch/tree/v2.6.0"
+                "source": "https://github.com/pestphp/pest-plugin-arch/tree/v2.7.0"
             },
             "funding": [
                 {
@@ -5993,7 +5993,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-01-05T11:06:22+00:00"
+            "time": "2024-01-26T09:46:42+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -7697,13 +7697,13 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
-    "platform": [],
-    "platform-dev": [],
+    "platform": {},
+    "platform-dev": {},
     "platform-overrides": {
         "php": "8.3"
     },
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.6.0"
 }
