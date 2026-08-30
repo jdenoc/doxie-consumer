@@ -24,7 +24,7 @@
         "humbug/box": "^4.3"
     },
     "require-dev": {
-        "pestphp/pest": "^2.25",
+        "pestphp/pest": "^3.0",
         "friendsofphp/php-cs-fixer": "^3.49"
     },
     "autoload": {
